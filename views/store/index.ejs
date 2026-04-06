@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    <header class="hero">
+        <nav class="topbar">
+            <a href="/" class="brand"><%= merchantName %></a>
+            <a href="/cart" class="cart-link">Cart <span id="cartCountBadge">0</span></a>
+        </nav>
+
+        <div class="hero-copy">
+            <p class="eyebrow">Direct checkout handoff</p>
+            <h1>Shop the catalog, build your cart, then move into Kerliix Pay only when the order is ready.</h1>
+            <p class="lede">This merchant app owns discovery and cart management. The payment server only takes over at checkout creation time.</p>
+        </div>
+    </header>
+
+    <main class="catalog-shell">
+        <section class="catalog-header">
+            <div>
+                <p class="section-label">Items</p>
+                <h2>Curated devices and accessories</h2>
+            </div>
+            <a href="/cart" class="secondary-link">Review cart</a>
+        </section>
+
+        <section class="product-grid">
+            <% products.forEach((product) => { %>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <span class="product-badge"><%= product.badge %></span>
+                        <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="product-image">
+                    </div>
+                    <div class="product-copy">
+                        <div class="product-meta">
+                            <p class="product-sku"><%= product.sku %></p>
+                            <p class="product-price">$<%= product.price.toFixed(2) %></p>
+                        </div>
+                        <h3><%= product.name %></h3>
+                        <p><%= product.description %></p>
+                    </div>
+                    <button
+                        class="primary-button add-to-cart-btn"
+                        data-product-id="<%= product.id %>"
+                    >
+                        Add to cart
+                    </button>
+                </article>
+            <% }) %>
+        </section>
+    </main>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+    </script>
+    <script src="/js/store.js"></script>
+</body>
+</html>
