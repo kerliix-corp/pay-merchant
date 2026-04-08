@@ -1,11 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const legalController = require('../controllers/legalController');
+import { Router } from "express";
+import legalController from "../controllers/legalController.js";
 
-router.get('/privacy-policy', legalController.getPrivacyPolicy);
-router.get('/terms-of-service', legalController.getTermsOfService);
-router.get('/return-policy', legalController.getReturnPolicy);
-router.get('/refund-policy', legalController.getRefundPolicy);
+const legalRouter = Router();
 
-module.exports = router;
+legalRouter.get("/privacy-policy", legalController.getPrivacyPolicy);
+legalRouter.get("/terms-of-service", legalController.getTermsOfService);
+legalRouter.get("/return-policy", legalController.getReturnPolicy);
+legalRouter.get("/refund-policy", legalController.getRefundPolicy);
 
+export default legalRouter;
