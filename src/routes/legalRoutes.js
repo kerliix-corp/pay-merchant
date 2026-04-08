@@ -1,5 +1,5 @@
 import { Router } from "express";
-import legalController from "../controllers/legalController.js";
+import * as legalController from "../controllers/legalController.js"; // <-- fix
 
 const legalRouter = Router();
 
