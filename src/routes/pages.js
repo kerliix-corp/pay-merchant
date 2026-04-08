@@ -13,7 +13,7 @@ import {
   renderWishlist,
   renderCheckoutSuccess,
   renderCheckoutCancel
-} from "../controllers/pageController.js";
+} from "../controllers/pages.js";
 
 const router = Router();
 
