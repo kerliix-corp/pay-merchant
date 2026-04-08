@@ -35,6 +35,11 @@ function syncCartBadge() {
   if (badge) {
     badge.textContent = String(getCartCount());
   }
+  
+  const bottomBadge = document.getElementById("bottomCartBadge");
+  if (bottomBadge) {
+    bottomBadge.textContent = String(getCartCount());
+  }
 }
 
 function addToCart(productId) {
@@ -57,6 +62,8 @@ function addToCart(productId) {
       description: product.description,
       imageUrl: product.imageUrl,
       price: product.price,
+      category: product.category,
+      retailer: product.retailer,
       quantity: 1
     });
   }
@@ -85,17 +92,190 @@ function updateQuantity(productId, quantity) {
   renderCartPage();
 }
 
-function renderCatalogPage() {
-  document.querySelectorAll(".add-to-cart-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      addToCart(button.dataset.productId);
-      button.textContent = "Added";
-      window.setTimeout(() => {
-        button.textContent = "Add to cart";
-      }, 900);
-    });
-  });
+function getUniqueCategories() {
+  const cats = new Set(products.map(p => p.category).filter(c => c));
+  return ['all', ...Array.from(cats).sort()];
+}
 
+function getUniqueRetailers() {
+  const retailers = new Set(products.map(p => p.retailer).filter(r => r));
+  return ['all', ...Array.from(retailers).sort()];
+}
+
+function populateFilters() {
+  const categorySelect = document.getElementById('categoryFilter');
+  const retailerSelect = document.getElementById('retailerFilter');
+  
+  if (categorySelect) {
+    const categories = getUniqueCategories();
+    categorySelect.innerHTML = categories.map(cat => 
+      `<option value="${cat}">${cat === 'all' ? 'All Categories' : cat}</option>`
+    ).join('');
+  }
+  
+  if (retailerSelect) {
+    const retailers = getUniqueRetailers();
+    retailerSelect.innerHTML = retailers.map(ret => 
+      `<option value="${ret}">${ret === 'all' ? 'All Retailers' : ret}</option>`
+    ).join('');
+  }
+}
+
+function filterProducts() {
+  const categoryFilter = document.getElementById('categoryFilter')?.value || 'all';
+  const retailerFilter = document.getElementById('retailerFilter')?.value || 'all';
+  
+  let filtered = [...products];
+  
+  if (categoryFilter !== 'all') {
+    filtered = filtered.filter(p => p.category === categoryFilter);
+  }
+  
+  if (retailerFilter !== 'all') {
+    filtered = filtered.filter(p => p.retailer === retailerFilter);
+  }
+  
+  renderProductsByCategory(filtered);
+}
+
+function renderProductsByCategory(productsToRender) {
+  const container = document.getElementById('productCategories');
+  if (!container) return;
+  
+  const productsByCategory = {};
+  
+  productsToRender.forEach(product => {
+    const category = product.category || 'Uncategorized';
+    if (!productsByCategory[category]) {
+      productsByCategory[category] = [];
+    }
+    productsByCategory[category].push(product);
+  });
+  
+  const sortedCategories = Object.keys(productsByCategory).sort();
+  
+  if (sortedCategories.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+        <p>No products found matching your filters.</p>
+        <button onclick="document.getElementById('resetFilters')?.click()" class="primary-button inline-button" style="width: auto; margin-top: 16px;">
+          <i class="fas fa-undo-alt"></i>
+          Reset Filters
+        </button>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = sortedCategories.map(category => {
+    const categoryProducts = productsByCategory[category];
+    
+    return `
+      <section class="category-section">
+        <div class="category-header">
+          <h2 class="category-title">
+            <i class="fas fa-tag"></i>
+            ${category}
+          </h2>
+          <p class="category-count">${categoryProducts.length} item${categoryProducts.length !== 1 ? 's' : ''}</p>
+        </div>
+        <div class="product-grid">
+          ${categoryProducts.map(product => `
+            <article class="product-card">
+              <div class="product-image-wrap">
+                <span class="product-badge">
+                  <i class="fas fa-star"></i>
+                  ${product.badge}
+                </span>
+                <img src="${product.imageUrl}" alt="${product.name}" class="product-image">
+              </div>
+              <div class="product-copy">
+                <div class="product-meta">
+                  <p class="product-sku">
+                    <i class="fas fa-barcode"></i>
+                    ${product.sku}
+                  </p>
+                  <p class="product-price">
+                    <i class="fas fa-dollar-sign"></i>
+                    ${product.price.toFixed(2)}
+                  </p>
+                </div>
+                <div class="product-retailer">
+                  <i class="fas fa-store"></i>
+                  <span>${product.retailer || 'Direct'}</span>
+                </div>
+                <h3>${product.name}</h3>
+                <p>${product.description}</p>
+              </div>
+              <button
+                class="primary-button add-to-cart-btn"
+                data-product-id="${product.id}"
+              >
+                <i class="fas fa-cart-plus"></i>
+                Add to cart
+              </button>
+            </article>
+          `).join('')}
+        </div>
+      </section>
+    `;
+  }).join('');
+  
+  attachAddToCartEvents();
+}
+
+function attachAddToCartEvents() {
+  const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+  addToCartButtons.forEach((button) => {
+    button.removeEventListener('click', handleAddToCartClick);
+    button.addEventListener('click', handleAddToCartClick);
+  });
+}
+
+function handleAddToCartClick(e) {
+  const button = e.currentTarget;
+  const productId = button.getAttribute('data-product-id');
+  addToCart(productId);
+  
+  const originalText = button.innerHTML;
+  button.innerHTML = '<i class="fas fa-check"></i> Added';
+  setTimeout(() => {
+    button.innerHTML = originalText;
+  }, 900);
+}
+
+function resetFilters() {
+  const categorySelect = document.getElementById('categoryFilter');
+  const retailerSelect = document.getElementById('retailerFilter');
+  
+  if (categorySelect) categorySelect.value = 'all';
+  if (retailerSelect) retailerSelect.value = 'all';
+  
+  filterProducts();
+}
+
+function renderCatalogPage() {
+  populateFilters();
+  renderProductsByCategory(products);
+  
+  const categoryFilter = document.getElementById('categoryFilter');
+  const retailerFilter = document.getElementById('retailerFilter');
+  const resetBtn = document.getElementById('resetFilters');
+  
+  if (categoryFilter) {
+    categoryFilter.removeEventListener('change', filterProducts);
+    categoryFilter.addEventListener('change', filterProducts);
+  }
+  if (retailerFilter) {
+    retailerFilter.removeEventListener('change', filterProducts);
+    retailerFilter.addEventListener('change', filterProducts);
+  }
+  if (resetBtn) {
+    resetBtn.removeEventListener('click', resetFilters);
+    resetBtn.addEventListener('click', resetFilters);
+  }
+  
   syncCartBadge();
 }
 
@@ -114,18 +294,18 @@ function renderCartPage() {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  summaryItems.textContent = String(itemCount);
-  summarySubtotal.textContent = formatCurrency(subtotal);
-  summaryTotal.textContent = formatCurrency(subtotal);
-  checkoutBtn.disabled = cart.length === 0;
+  if (summaryItems) summaryItems.textContent = String(itemCount);
+  if (summarySubtotal) summarySubtotal.textContent = formatCurrency(subtotal);
+  if (summaryTotal) summaryTotal.textContent = formatCurrency(subtotal);
+  if (checkoutBtn) checkoutBtn.disabled = cart.length === 0;
 
   if (!cart.length) {
     cartItemsEl.innerHTML = "";
-    emptyState.hidden = false;
+    if (emptyState) emptyState.hidden = false;
     return;
   }
 
-  emptyState.hidden = true;
+  if (emptyState) emptyState.hidden = true;
   cartItemsEl.innerHTML = cart.map((item) => `
     <article class="cart-item">
       <img src="${item.imageUrl}" alt="${item.name}" class="cart-item-image">
@@ -133,11 +313,22 @@ function renderCartPage() {
         <p class="product-sku">${item.sku}</p>
         <h3>${item.name}</h3>
         <p>${item.description}</p>
+        <div class="product-retailer" style="margin-top: 8px;">
+          <i class="fas fa-store"></i>
+          <span>${item.retailer || 'Direct'}</span>
+        </div>
         <div class="cart-item-controls">
-          <button class="qty-btn" data-action="decrease" data-product-id="${item.id}">-</button>
+          <button class="qty-btn" data-action="decrease" data-product-id="${item.id}">
+            <i class="fas fa-minus"></i>
+          </button>
           <span>${item.quantity}</span>
-          <button class="qty-btn" data-action="increase" data-product-id="${item.id}">+</button>
-          <button class="remove-btn" data-product-id="${item.id}">Remove</button>
+          <button class="qty-btn" data-action="increase" data-product-id="${item.id}">
+            <i class="fas fa-plus"></i>
+          </button>
+          <button class="remove-btn" data-product-id="${item.id}">
+            <i class="fas fa-trash"></i>
+            Remove
+          </button>
         </div>
       </div>
       <strong>${formatCurrency(item.price * item.quantity)}</strong>
@@ -171,13 +362,15 @@ async function createPaymentSession() {
 
   if (!cart.length) {
     logTrace("create_payment_session_blocked_empty_cart");
-    checkoutMessage.textContent = "Your cart is empty.";
+    if (checkoutMessage) checkoutMessage.textContent = "Your cart is empty.";
     return;
   }
 
-  checkoutBtn.disabled = true;
-  checkoutBtn.textContent = "Creating payment session...";
-  checkoutMessage.textContent = "";
+  if (checkoutBtn) {
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = "Creating payment session...";
+  }
+  if (checkoutMessage) checkoutMessage.textContent = "";
 
   logTrace("create_payment_session_started", {
     endpoint: "/api/checkout-sessions",
@@ -193,7 +386,14 @@ async function createPaymentSession() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        items: cart
+        items: cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          sku: item.sku,
+          retailer: item.retailer
+        }))
       })
     });
 
@@ -219,9 +419,11 @@ async function createPaymentSession() {
       message: error.message,
       stack: error.stack
     });
-    checkoutMessage.textContent = error.message;
-    checkoutBtn.disabled = false;
-    checkoutBtn.textContent = "Proceed to payment";
+    if (checkoutMessage) checkoutMessage.textContent = error.message;
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed to payment";
+    }
   }
 }
 
@@ -233,12 +435,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   syncCartBadge();
 
-  if (document.querySelector(".product-grid")) {
+  if (document.querySelector(".product-grid") || document.getElementById("productCategories")) {
     renderCatalogPage();
   }
 
   if (document.getElementById("cartItems")) {
     renderCartPage();
-    document.getElementById("checkoutBtn").addEventListener("click", createPaymentSession);
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener("click", createPaymentSession);
+    }
   }
 });
+
