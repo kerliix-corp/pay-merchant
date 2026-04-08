@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - <%= merchantName %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/navbar.ejs') %>
+
+    <main class="checkout-shell">
+        <div class="checkout-cancel">
+            <div class="cancel-icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <h1>Checkout Cancelled</h1>
+            <p>Your checkout process was cancelled. No charges were made.</p>
+            <p>You can return to your cart and try again, or continue shopping.</p>
+            <div class="checkout-actions">
+                <a href="/cart" class="primary-button">Return to Cart</a>
+                <a href="/" class="secondary-button">Continue Shopping</a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/bottom-nav.ejs') %>
+</body>
+</html>
+      

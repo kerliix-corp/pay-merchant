@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> | Privacy Policy</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="legal-shell">
+        <div class="legal-container">
+            <div class="legal-header">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Shop
+                </a>
+                <h1>Privacy Policy</h1>
+                <p class="last-updated">Last Updated: <%= lastUpdated %></p>
+            </div>
+
+            <div class="legal-content">
+                <section class="legal-section">
+                    <h2><i class="fas fa-info-circle"></i> Introduction</h2>
+                    <p>At <%= merchantName %>, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-database"></i> Information We Collect</h2>
+                    <h3>Personal Information</h3>
+                    <p>We may collect personal information that you voluntarily provide to us when you:</p>
+                    <ul>
+                        <li>Create an account or make a purchase</li>
+                        <li>Subscribe to our newsletter</li>
+                        <li>Contact customer support</li>
+                        <li>Participate in surveys or promotions</li>
+                    </ul>
+                    <p>This information may include your name, email address, shipping address, billing address, phone number, and payment information.</p>
+
+                    <h3>Automatically Collected Information</h3>
+                    <p>When you visit our website, we automatically collect certain information about your device, including:</p>
+                    <ul>
+                        <li>IP address</li>
+                        <li>Browser type and version</li>
+                        <li>Pages you visit</li>
+                        <li>Time and date of your visit</li>
+                        <li>Referring website addresses</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-cookie-bite"></i> Cookies and Tracking Technologies</h2>
+                    <p>We use cookies and similar tracking technologies to track activity on our website and hold certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier.</p>
+                    <p>You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our website.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-chart-line"></i> How We Use Your Information</h2>
+                    <p>We use the information we collect to:</p>
+                    <ul>
+                        <li>Process and fulfill your orders</li>
+                        <li>Communicate with you about your orders and account</li>
+                        <li>Improve our website and customer experience</li>
+                        <li>Send you marketing communications (with your consent)</li>
+                        <li>Detect and prevent fraud</li>
+                        <li>Comply with legal obligations</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-share-alt"></i> Information Sharing</h2>
+                    <p>We do not sell, trade, or rent your personal information to third parties. We may share your information with:</p>
+                    <ul>
+                        <li><strong>Service Providers:</strong> Third-party vendors who help us operate our business (payment processors, shipping carriers, etc.)</li>
+                        <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
+                        <li><strong>Business Transfers:</strong> In connection with a merger, sale, or acquisition</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-lock"></i> Data Security</h2>
+                    <p>We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet is 100% secure.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-user-shield"></i> Your Rights</h2>
+                    <p>Depending on your location, you may have the following rights:</p>
+                    <ul>
+                        <li>Access to your personal information</li>
+                        <li>Correction of inaccurate information</li>
+                        <li>Deletion of your information</li>
+                        <li>Restriction or objection to processing</li>
+                        <li>Data portability</li>
+                        <li>Withdraw consent at any time</li>
+                    </ul>
+                    <p>To exercise these rights, please contact us at privacy@<%= merchantName.toLowerCase().replace(/\s/g, '') %>.com</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-globe"></i> Third-Party Links</h2>
+                    <p>Our website may contain links to third-party websites. We are not responsible for the privacy practices or content of these websites. We encourage you to read the privacy policies of any linked websites you visit.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-child"></i> Children's Privacy</h2>
+                    <p>Our services are not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13. If we become aware that we have collected personal information from a child under 13, we will take steps to delete it.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+                    <p>If you have questions about this Privacy Policy, please contact us:</p>
+                    <ul>
+                        <li>Email: privacy@<%= merchantName.toLowerCase().replace(/\s/g, '') %>.com</li>
+                        <li>Phone: 1-800-<%= Math.floor(Math.random() * 900) + 100 %>-<%= Math.floor(Math.random() * 9000) + 1000 %></li>
+                        <li>Address: <%= merchantName %>, 123 Commerce Street, Suite 100, New York, NY 10001</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script src="/js/store.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - <%= merchantName %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/category.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="category-shell">
+        <div class="category-header">
+            <h1><%= category %></h1>
+            <p class="category-count"><%= products.length %> products</p>
+        </div>
+
+        <div class="category-filters">
+            <div class="sort-options">
+                <label>Sort by:</label>
+                <select id="sortBy">
+                    <option value="default">Default</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            <% products.forEach(product => { %>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <span class="product-badge">
+                            <i class="fas fa-star"></i>
+                            <%= product.badge %>
+                        </span>
+                        <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="product-image">
+                    </div>
+                    <div class="product-copy">
+                        <div class="product-meta">
+                            <p class="product-sku"><%= product.sku %></p>
+                            <p class="product-price">$<%= product.price.toFixed(2) %></p>
+                        </div>
+                        <div class="product-retailer">
+                            <i class="fas fa-store"></i>
+                            <span><%= product.retailer %></span>
+                        </div>
+                        <h3><%= product.name %></h3>
+                        <p><%= product.description.substring(0, 80) %>...</p>
+                    </div>
+                    <button class="primary-button add-to-cart-btn" data-product-id="<%= product.id %>">
+                        <i class="fas fa-cart-plus"></i>
+                        Add to cart
+                    </button>
+                </article>
+            <% }) %>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+    </script>
+    <script src="/js/store.js"></script>
+</body>
+</html>
+        

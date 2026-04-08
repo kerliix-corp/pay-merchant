@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - <%= merchantName %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/product-details.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="product-details-shell">
+        <div class="breadcrumbs">
+            <a href="/">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="/category/<%= product.category %>"><%= product.category %></a>
+            <i class="fas fa-chevron-right"></i>
+            <span><%= product.name %></span>
+        </div>
+
+        <div class="product-details-grid">
+            <div class="product-gallery">
+                <div class="main-image">
+                    <img src="<%= product.imageUrl %>" alt="<%= product.name %>" id="mainProductImage">
+                </div>
+            </div>
+
+            <div class="product-info">
+                <div class="product-retailer-badge">
+                    <i class="fas fa-store"></i>
+                    Sold by: <strong><%= product.retailer %></strong>
+                </div>
+                <h1><%= product.name %></h1>
+                <div class="product-sku-details">SKU: <%= product.sku %></div>
+                <div class="product-badge-detail">
+                    <span class="badge"><%= product.badge %></span>
+                </div>
+                <div class="product-price-detail">
+                    $<%= product.price.toFixed(2) %>
+                </div>
+                <div class="product-description-detail">
+                    <h3>Description</h3>
+                    <p><%= product.description %></p>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="primary-button add-to-cart-btn" data-product-id="<%= product.id %>">
+                        <i class="fas fa-cart-plus"></i>
+                        Add to Cart
+                    </button>
+                    <button class="secondary-button add-to-wishlist-btn" data-product-id="<%= product.id %>">
+                        <i class="far fa-heart"></i>
+                        Add to Wishlist
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="related-products">
+            <h2>You Might Also Like</h2>
+            <div class="product-grid">
+                <% const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4); %>
+                <% relatedProducts.forEach(related => { %>
+                    <article class="product-card">
+                        <div class="product-image-wrap">
+                            <span class="product-badge">
+                                <i class="fas fa-star"></i>
+                                <%= related.badge %>
+                            </span>
+                            <img src="<%= related.imageUrl %>" alt="<%= related.name %>" class="product-image">
+                        </div>
+                        <div class="product-copy">
+                            <div class="product-meta">
+                                <p class="product-sku"><%= related.sku %></p>
+                                <p class="product-price">$<%= related.price.toFixed(2) %></p>
+                            </div>
+                            <h3><%= related.name %></h3>
+                            <p><%= related.description.substring(0, 80) %>...</p>
+                        </div>
+                        <button class="primary-button add-to-cart-btn" data-product-id="<%= related.id %>">
+                            <i class="fas fa-cart-plus"></i>
+                            Add to cart
+                        </button>
+                    </article>
+                <% }) %>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+    </script>
+    <script src="/js/store.js"></script>
+</body>
+</html>

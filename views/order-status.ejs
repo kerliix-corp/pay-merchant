@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+</head>
+<body data-app-base-url="<%= appBaseUrl %>">
+    <header class="cart-hero">
+        <nav class="topbar">
+            <a href="/" class="brand"><%= merchantName %></a>
+            <a href="/" class="secondary-link">Continue shopping</a>
+        </nav>
+
+        <div class="hero-copy compact">
+            <p class="eyebrow">Order tracking</p>
+            <h1>Merchant-side payment status</h1>
+        </div>
+    </header>
+
+    <main class="cart-layout">
+        <section class="cart-items-panel">
+            <% if (!order) { %>
+                <div class="empty-state">
+                    <h3>Order not found</h3>
+                    <p>We could not find that merchant order.</p>
+                </div>
+            <% } else { %>
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Merchant order</p>
+                        <h2 id="orderStatusHeading"><%= order.status %></h2>
+                    </div>
+                    <span class="status-pill" id="orderStatusPill"><%= order.status %></span>
+                </div>
+
+                <div class="summary-list">
+                    <div class="summary-row">
+                        <span>Merchant Order ID</span>
+                        <strong id="merchantOrderId"><%= order.merchantOrderId %></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Payment Session</span>
+                        <strong id="sessionId"><%= order.sessionId || "-" %></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Payment Reference</span>
+                        <strong id="paymentReference"><%= order.paymentReference || "-" %></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Gateway Reference</span>
+                        <strong id="gatewayReference"><%= order.gatewayReference || "-" %></strong>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <strong id="orderTotal">$<%= Number(order.total || 0).toFixed(2) %></strong>
+                    </div>
+                </div>
+
+                <div id="orderItems" class="cart-items compact-list"></div>
+            <% } %>
+        </section>
+
+        <aside class="summary-panel">
+            <p class="section-label">Webhook status</p>
+            <% if (!order) { %>
+                <h2>Missing order</h2>
+                <p class="checkout-note">No webhook updates are available for this order.</p>
+            <% } else { %>
+                <h2 id="orderStateLabel"><%= order.status %></h2>
+                <p class="checkout-note" id="orderStateMessage">Waiting for payment updates from Kerliix Pay.</p>
+                <p class="checkout-note">This page updates by polling the merchant backend, which is updated by Kerliix Pay webhooks.</p>
+                <p class="checkout-note">Last event: <span id="lastEventId"><%= order.lastEventId || "-" %></span></p>
+            <% } %>
+            <a href="/" class="primary-button inline-button">Back to store</a>
+        </aside>
+    </main>
+
+    <% if (order) { %>
+        <script>
+            window.__MERCHANT_ORDER__ = <%- JSON.stringify(order) %>;
+        </script>
+        <script src="/js/order-status.js"></script>
+    <% } %>
+</body>
+</html>

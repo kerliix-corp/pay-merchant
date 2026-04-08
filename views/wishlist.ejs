@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - <%= merchantName %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/wishlist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="wishlist-shell">
+        <div class="wishlist-header">
+            <h1>My Wishlist</h1>
+            <p>Save your favorite items for later</p>
+        </div>
+
+        <div id="wishlistGrid" class="wishlist-grid"></div>
+        <div id="emptyWishlist" class="empty-wishlist" style="display: none;">
+            <i class="far fa-heart"></i>
+            <h3>Your wishlist is empty</h3>
+            <p>Start adding items you love to your wishlist</p>
+            <a href="/" class="primary-button inline-button">Start Shopping</a>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+    </script>
+    <script src="/js/wishlist.js"></script>
+</body>
+</html>

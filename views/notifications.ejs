@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - Notifications</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/notifications.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('../partials/navbar.ejs') %>
+
+    <main class="notifications-shell">
+        <div class="notifications-header">
+            <h1>Notifications</h1>
+            <button id="markAllRead" class="mark-all-read">
+                <i class="fas fa-check-double"></i>
+                Mark all as read
+            </button>
+        </div>
+
+        <div class="notification-filters">
+            <button class="notification-filter active" data-filter="all">All</button>
+            <button class="notification-filter" data-filter="unread">Unread</button>
+            <button class="notification-filter" data-filter="orders">Orders</button>
+            <button class="notification-filter" data-filter="promotions">Promotions</button>
+            <button class="notification-filter" data-filter="updates">Updates</button>
+        </div>
+
+        <div id="notificationsList" class="notifications-list"></div>
+        <div id="noNotifications" class="no-notifications" style="display: none;">
+            <i class="fas fa-bell-slash"></i>
+            <h3>No notifications</h3>
+            <p>You're all caught up!</p>
+        </div>
+    </main>
+
+    <%- include('../partials/bottom-nav.ejs') %>
+
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

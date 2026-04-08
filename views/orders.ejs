@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - My Orders</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/orders.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('../partials/navbar.ejs') %>
+
+    <main class="orders-shell">
+        <div class="orders-header">
+            <h1>My Orders</h1>
+            <div class="order-filters">
+                <button class="order-filter-btn active" data-status="all">All</button>
+                <button class="order-filter-btn" data-status="pending">Pending</button>
+                <button class="order-filter-btn" data-status="processing">Processing</button>
+                <button class="order-filter-btn" data-status="shipped">Shipped</button>
+                <button class="order-filter-btn" data-status="delivered">Delivered</button>
+                <button class="order-filter-btn" data-status="cancelled">Cancelled</button>
+            </div>
+        </div>
+
+        <div id="ordersList" class="orders-list"></div>
+        <div id="noOrders" class="no-orders" style="display: none;">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>No orders yet</h3>
+            <p>Start shopping to see your orders here</p>
+            <a href="/" class="primary-button inline-button">Start Shopping</a>
+        </div>
+    </main>
+
+    <%- include('../partials/bottom-nav.ejs') %>
+
+    <script src="/js/orders.js"></script>
+</body>
+</html>

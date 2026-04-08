@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> | Refund Policy</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="legal-shell">
+        <div class="legal-container">
+            <div class="legal-header">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Shop
+                </a>
+                <h1>Refund Policy</h1>
+                <p class="last-updated">Last Updated: <%= lastUpdated %></p>
+            </div>
+
+            <div class="legal-content">
+                <section class="legal-section">
+                    <h2><i class="fas fa-info-circle"></i> Overview</h2>
+                    <p>This Refund Policy explains when and how refunds are issued for purchases made through <%= merchantName %>. Please read this policy carefully before making a purchase.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-clock"></i> Refund Eligibility</h2>
+                    <p>Refunds are issued under the following circumstances:</p>
+                    <ul>
+                        <li>Items returned within the 30-day return window that meet return eligibility criteria</li>
+                        <li>Damaged, defective, or incorrect items received</li>
+                        <li>Orders cancelled before shipping</li>
+                        <li>Items covered under warranty</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-percent"></i> Full Refunds</h2>
+                    <p>Full refunds (including product price plus applicable taxes) are issued when:</p>
+                    <ul>
+                        <li>Item is returned in original condition within the return window</li>
+                        <li>Item is defective or damaged upon arrival</li>
+                        <li>Wrong item was shipped</li>
+                        <li>Order was cancelled before shipment</li>
+                    </ul>
+                    <p><strong>Note:</strong> Original shipping charges are non-refundable unless the return is due to our error.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-chart-line"></i> Partial Refunds</h2>
+                    <p>Partial refunds may be granted in the following situations:</p>
+                    <ul>
+                        <li>Items returned after 30 days but within 45 days (restocking fee applies)</li>
+                        <li>Items with obvious signs of use or missing parts</li>
+                        <li>Items returned without original packaging</li>
+                        <li>Opened software or digital products (if applicable)</li>
+                    </ul>
+                    <p>The refund amount will be determined based on the condition of the returned item.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-ban"></i> Non-Refundable Items</h2>
+                    <p>The following items are non-refundable:</p>
+                    <ul>
+                        <li>Gift cards (except where required by law)</li>
+                        <li>Downloadable software or digital products after access is granted</li>
+                        <li>Personalized or custom-made items</li>
+                        <li>Final sale or clearance items</li>
+                        <li>Perishable goods</li>
+                        <li>Items returned after 45 days</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-credit-card"></i> Refund Methods</h2>
+                    <p>Refunds are issued to the original payment method used for the purchase:</p>
+                    <ul>
+                        <li><strong>Credit/Debit Cards:</strong> Refund credited back to the same card</li>
+                        <li><strong>PayPal:</strong> Refund sent to your PayPal account</li>
+                        <li><strong>Digital Wallets:</strong> Refund returned to the original wallet</li>
+                        <li><strong>Store Credit:</strong> Available as an alternative option upon request</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-hourglass-half"></i> Refund Processing Time</h2>
+                    <p>Our refund process timeline:</p>
+                    <ol>
+                        <li><strong>Return Receipt:</strong> 5-7 business days for inspection</li>
+                        <li><strong>Approval Notification:</strong> Email confirmation once approved</li>
+                        <li><strong>Refund Processing:</strong> 7-10 business days after approval</li>
+                        <li><strong>Bank Processing:</strong> Additional 3-5 business days depending on your financial institution</li>
+                    </ol>
+                    <p>Total time from return receipt to refund in your account may take up to 20 business days.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-calendar-alt"></i> Late or Missing Refunds</h2>
+                    <p>If you haven't received a refund after the stated processing time:</p>
+                    <ol>
+                        <li>Check your bank account or credit card statement again</li>
+                        <li>Contact your credit card company or bank (processing times vary)</li>
+                        <li>Check with your payment provider (PayPal, etc.)</li>
+                        <li>If you've done all of the above and still haven't received your refund, please contact us at refunds@<%= merchantName.toLowerCase().replace(/\s/g, '') %>.com</li>
+                    </ol>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-gift"></i> Gift Refunds</h2>
+                    <p>If you received an item as a gift and wish to return it:</p>
+                    <ul>
+                        <li>Refunds will be issued as store credit to the gift recipient</li>
+                        <li>The original purchaser will not receive a refund to their payment method</li>
+                        <li>Gift returns require the order number or gift receipt</li>
+                        <li>Store credit never expires and can be used for future purchases</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-truck"></i> Shipping Cost Refunds</h2>
+                    <p>Original shipping costs are non-refundable in most cases. Exceptions include:</p>
+                    <ul>
+                        <li>We shipped the wrong item</li>
+                        <li>The item arrived damaged or defective</li>
+                        <li>The order was cancelled before shipping</li>
+                    </ul>
+                    <p>In these cases, we will also refund the original shipping charges and provide a prepaid return label.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-percent"></i> Restocking Fees</h2>
+                    <p>A restocking fee may apply in the following situations:</p>
+                    <ul>
+                        <li>Returns without original packaging: 15% restocking fee</li>
+                        <li>Returns with missing accessories or manuals: Up to 25% restocking fee</li>
+                        <li>Returns received after 30 days but within 45 days: 20% restocking fee</li>
+                        <li>Bulk orders (5+ identical items): 10% restocking fee</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-receipt"></i> Price Adjustments</h2>
+                    <p>If an item goes on sale within 7 days of your purchase, we will refund the price difference upon request. Contact our support team with your order number for a price adjustment.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-sync-alt"></i> Warranty Refunds</h2>
+                    <p>For items covered under warranty:</p>
+                    <ul>
+                        <li>Within 30 days: Full refund or replacement available</li>
+                        <li>30 days to 1 year: Replacement or store credit only</li>
+                        <li>After 1 year: Subject to manufacturer warranty terms</li>
+                    </ul>
+                    <p>Warranty refunds require proof of purchase and may require item inspection.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-globe"></i> International Orders</h2>
+                    <p>For international orders:</p>
+                    <ul>
+                        <li>Return shipping costs are the customer's responsibility</li>
+                        <li>Customs duties and taxes paid are non-refundable</li>
+                        <li>Refunds are issued in USD at the original exchange rate</li>
+                        <li>International returns may take longer to process</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-envelope"></i> Contact Us About Refunds</h2>
+                    <p>For questions about refunds or to check the status of a refund:</p>
+                    <ul>
+                        <li>Email: refunds@<%= merchantName.toLowerCase().replace(/\s/g, '') %>.com</li>
+                        <li>Phone: 1-800-<%= Math.floor(Math.random() * 900) + 100 %>-<%= Math.floor(Math.random() * 9000) + 1000 %></li>
+                        <li>Order Status Portal: <a href="/account/orders" style="color: var(--accent);">Check Order Status</a></li>
+                    </ul>
+                    <p>Please have your order number ready when contacting us about a refund.</p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script src="/js/store.js"></script>
+</body>
+</html>
+                  

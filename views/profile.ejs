@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - Profile</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('../partials/navbar.ejs') %>
+
+    <main class="profile-shell">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+                <button id="changeAvatar" class="change-avatar">
+                    <i class="fas fa-camera"></i>
+                </button>
+            </div>
+            <h1 id="profileName">Guest User</h1>
+            <p id="profileEmail">guest@example.com</p>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-card">
+                <i class="fas fa-shopping-bag"></i>
+                <div class="stat-info">
+                    <span class="stat-value" id="totalOrders">0</span>
+                    <span class="stat-label">Total Orders</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-star"></i>
+                <div class="stat-info">
+                    <span class="stat-value" id="reviewsCount">0</span>
+                    <span class="stat-label">Reviews</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-heart"></i>
+                <div class="stat-info">
+                    <span class="stat-value" id="wishlistCount">0</span>
+                    <span class="stat-label">Wishlist Items</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-sections">
+            <div class="profile-section">
+                <h3>Personal Information</h3>
+                <div class="info-row">
+                    <span class="info-label">Full Name:</span>
+                    <span class="info-value" id="displayName">Guest User</span>
+                    <button class="edit-btn" data-field="name">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" id="displayEmail">guest@example.com</span>
+                    <button class="edit-btn" data-field="email">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value" id="displayPhone">Not provided</span>
+                    <button class="edit-btn" data-field="phone">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>Recent Activity</h3>
+                <div id="recentOrders" class="recent-orders"></div>
+                <a href="/user/orders" class="view-all-link">View all orders →</a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/bottom-nav.ejs') %>
+
+    <script src="/js/profile.js"></script>
+</body>
+</html>

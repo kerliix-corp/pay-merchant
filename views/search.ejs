@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - Search</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/search.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="search-shell">
+        <div class="search-header">
+            <h1>Search Products</h1>
+            <div class="search-bar-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by name, category, or retailer..." autocomplete="off">
+                <button id="clearSearch" class="clear-search">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-filters">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="products">Products</button>
+                <button class="filter-chip" data-filter="categories">Categories</button>
+                <button class="filter-chip" data-filter="retailers">Retailers</button>
+            </div>
+        </div>
+
+        <div id="searchResults" class="search-results"></div>
+        <div id="noResults" class="no-results" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h3>No results found</h3>
+            <p>Try searching for something else</p>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+    </script>
+    <script src="/js/search.js"></script>
+</body>
+</html>

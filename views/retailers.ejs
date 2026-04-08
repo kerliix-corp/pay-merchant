@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> - Retailers</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/retailers.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="retailers-shell">
+        <div class="retailers-header">
+            <h1>Shop by Retailer</h1>
+            <p class="retailers-subtitle">Discover products from our trusted partners</p>
+        </div>
+
+        <div class="retailers-grid" id="retailersGrid"></div>
+        <div id="retailerProducts" class="retailer-products"></div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+    </script>
+    <script src="/js/retailers.js"></script>
+</body>
+</html>

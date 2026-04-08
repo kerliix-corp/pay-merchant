@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %> | Return Policy</title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    
+    <%- include('partials/navbar.ejs') %>
+
+    <main class="legal-shell">
+        <div class="legal-container">
+            <div class="legal-header">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Shop
+                </a>
+                <h1>Return Policy</h1>
+                <p class="last-updated">Last Updated: <%= lastUpdated %></p>
+            </div>
+
+            <div class="legal-content">
+                <section class="legal-section">
+                    <h2><i class="fas fa-clock"></i> Return Window</h2>
+                    <p>We accept returns within <strong>30 days</strong> from the date of delivery. Returns requested after this period will not be accepted unless required by applicable law.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-check-circle"></i> Eligibility for Returns</h2>
+                    <p>To be eligible for a return, items must meet the following conditions:</p>
+                    <ul>
+                        <li>Item must be unused and in the same condition as received</li>
+                        <li>Item must be in original packaging with all tags attached</li>
+                        <li>Item must not be marked as final sale or non-returnable</li>
+                        <li>Proof of purchase or order number is required</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-ban"></i> Non-Returnable Items</h2>
+                    <p>The following items cannot be returned:</p>
+                    <ul>
+                        <li>Gift cards</li>
+                        <li>Downloadable software or digital products</li>
+                        <li>Personalized or custom-made items</li>
+                        <li>Perishable goods (food, flowers, etc.)</li>
+                        <li>Intimate or sanitary goods</li>
+                        <li>Items marked as "Final Sale"</li>
+                        <li>Items damaged by misuse or improper handling</li>
+                    </ul>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-tools"></i> Damaged or Defective Items</h2>
+                    <p>If you receive a damaged or defective item, please contact us within <strong>7 days</strong> of delivery. We will arrange for a replacement or full refund, including return shipping costs. Please provide photos of the damage and your order number.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-tag"></i> Sale Items</h2>
+                    <p>Sale items may have different return policies. Please check the product page at the time of purchase. Clearance and final sale items cannot be returned unless defective.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-gift"></i> Gift Returns</h2>
+                    <p>If you received an item as a gift, you may return it for store credit or exchange. The gift giver will not receive a refund to their original payment method. Please contact our support team for assistance with gift returns.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-box-open"></i> How to Initiate a Return</h2>
+                    <p>To initiate a return, please follow these steps:</p>
+                    <ol>
+                        <li>Log into your account and go to "Order History"</li>
+                        <li>Select the order containing the item(s) you wish to return</li>
+                        <li>Click "Request Return" and follow the instructions</li>
+                        <li>Print the provided return shipping label</li>
+                        <li>Package the item(s) securely with original packaging</li>
+                        <li>Attach the return label and drop off at the designated carrier</li>
+                    </ol>
+                    <p>Alternatively, you can contact our customer support team at returns@<%= merchantName.toLowerCase().replace(/\s/g, '') %>.com</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-dollar-sign"></i> Return Shipping Costs</h2>
+                    <p>Return shipping costs are the responsibility of the customer unless:</p>
+                    <ul>
+                        <li>The item is damaged or defective</li>
+                        <li>The wrong item was shipped</li>
+                        <li>The item is being returned for warranty service</li>
+                    </ul>
+                    <p>In these cases, we will provide a prepaid return shipping label. Original shipping charges are non-refundable.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-search"></i> Inspection Process</h2>
+                    <p>Once we receive your return, our team will inspect the item(s) within <strong>5-7 business days</strong>. We reserve the right to deny returns if items do not meet our eligibility criteria or show signs of use, damage, or missing parts.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-exchange-alt"></i> Exchanges</h2>
+                    <p>For faster service, we recommend returning the original item for a refund and placing a new order for the desired item. If you need to exchange an item due to size or color issues, please contact our support team for assistance.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-credit-card"></i> Refund Processing</h2>
+                    <p>After inspection and approval, refunds will be processed to your original payment method within <strong>7-10 business days</strong>. Depending on your bank or credit card issuer, it may take additional time for the refund to appear in your account.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-store"></i> In-Store Returns</h2>
+                    <p>If you made a purchase in our physical store, please return the item to the same location with your receipt. In-store return policies may vary from online returns.</p>
+                </section>
+
+                <section class="legal-section">
+                    <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+                    <p>If you have questions about our return policy or need assistance with a return, please contact us:</p>
+                    <ul>
+                        <li>Email: returns@<%= merchantName.toLowerCase().replace(/\s/g, '') %>.com</li>
+                        <li>Phone: 1-800-<%= Math.floor(Math.random() * 900) + 100 %>-<%= Math.floor(Math.random() * 9000) + 1000 %></li>
+                        <li>Hours: Monday-Friday, 9 AM - 6 PM EST</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/bottom-nav.ejs') %>
+
+    <script src="/js/store.js"></script>
+</body>
+</html>
+                  
