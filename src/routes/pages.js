@@ -15,20 +15,23 @@ import {
   renderCheckoutCancel
 } from "../controllers/pages.js";
 
+import { requireSSO, optionalSSO } from "../middleware/ssoAuth.js";
+
 const router = Router();
 
-router.get("/", renderHome);
-router.get("/search", renderSearch);
-router.get("/cart", renderCart);
-router.get("/retailers", renderRetailers);
-router.get("/user/orders", renderOrders);
-router.get("/user/account", renderAccount);
-router.get("/user/notifications", renderNotifications);
-router.get("/user/profile", renderProfile);
-router.get("/product/:productId", renderProductDetails);
-router.get("/category/:categoryName", renderCategory);
-router.get("/wishlist", renderWishlist);
-router.get("/checkout/success", renderCheckoutSuccess);
-router.get("/checkout/cancel", renderCheckoutCancel);
+router.get("/", optionalSSO, renderHome);
+router.get("/search", optionalSSO, renderSearch);
+router.get("/product/:productId", optionalSSO, renderProductDetails);
+router.get("/category/:categoryName", optionalSSO, renderCategory);
+router.get("/retailers", optionalSSO, renderRetailers);
+router.get("/cart", optionalSSO, renderCart);
+router.get("/wishlist", requireSSO, renderWishlist);
+router.get("/user/orders", requireSSO, renderOrders);
+router.get("/user/account", requireSSO, renderAccount);
+router.get("/user/notifications", requireSSO, renderNotifications);
+router.get("/user/profile", requireSSO, renderProfile);
+router.get("/checkout/success", requireSSO, renderCheckoutSuccess);
+router.get("/checkout/cancel", requireSSO, renderCheckoutCancel);
 
 export default router;
+
