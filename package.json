@@ -1,24 +1,43 @@
 {
-  "name": "merchant",
+  "name": "kx-mart",
   "version": "1.0.0",
-  "description": "Merchant storefront for Kerliix Pay",
+  "description": "Kerliix Pay payment prototype served with Express and EJS.",
+  "private": true,
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "seerbit:encrypt-key": "node scripts/generateSeerbitEncryptionKey.js",
     "test": "echo \"No tests configured\""
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kerliix-corp/kx_mart.git"
+  },
+  "keywords": [
+    "kerliix",
+    "payments",
+    "express",
+    "ejs"
+  ],
   "author": "Kerliix Corporation Limited",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "type": "module",
+  "bugs": {
+    "url": "https://github.com/kerliix-corp/kx_mart/issues"
+  },
+  "homepage": "https://github.com/kerliix-corp/kx_mart#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.0",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.4.1",
     "nodemailer": "^8.0.4",
-    "redis": "^5.11.0"
+    "redis": "^5.11.0",
+    "socket.io": "^4.8.3",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
