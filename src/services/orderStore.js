@@ -14,28 +14,44 @@ function summarizeItems(items = []) {
         price: item.price,
         imageUrl: item.imageUrl,
         description: item.description,
-        sku: item.sku
+        sku: item.sku,
+        retailer: item.retailer
       }))
     : [];
 }
 
-export function createOrder({ items, merchantName }) {
+export function createOrder({ items, merchantName, customerEmail, customerName, shippingAddress, paymentMethod }) {
   const merchantOrderId = createMerchantOrderId();
   const normalizedItems = summarizeItems(items);
-  const total = Number(
+  const subtotal = Number(
     normalizedItems.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0).toFixed(2)
   );
+  const shipping = Number(process.env.SHIPPING_COST || 5.99);
+  const total = Number((subtotal + shipping).toFixed(2));
 
   const order = {
     merchantOrderId,
     merchantName,
+    customerEmail,
+    customerName,
+    shippingAddress,
+    paymentMethod,
     status: "pending_checkout",
+    subtotal,
+    shipping,
     total,
     currency: "USD",
     items: normalizedItems,
     sessionId: "",
     paymentReference: "",
     gatewayReference: "",
+    transactionId: "",
+    trackingNumber: "",
+    carrier: "",
+    estimatedDelivery: null,
+    refundAmount: 0,
+    refundReason: "",
+    cancellationReason: "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     lastEventId: ""
@@ -77,4 +93,12 @@ export function markWebhookEventProcessed(eventId) {
 
   webhookEvents.add(eventId);
   return true;
+}
+
+export function getAllOrders() {
+  return Array.from(orders.values());
+}
+
+export function getOrdersByCustomerEmail(email) {
+  return Array.from(orders.values()).filter(order => order.customerEmail === email);
 }
