@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title><%= title %> - <%= merchantName %></title>
+    <title><%= product.name %> - <%= merchantName %></title>
     <link rel="stylesheet" href="/css/store.css">
     <link rel="stylesheet" href="/css/product-details.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -64,7 +64,7 @@
             <div class="product-grid">
                 <% const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4); %>
                 <% relatedProducts.forEach(related => { %>
-                    <article class="product-card">
+                    <article class="product-card" data-product-id="<%= related.id %>">
                         <div class="product-image-wrap">
                             <span class="product-badge">
                                 <i class="fas fa-star"></i>
