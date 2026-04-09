@@ -10,7 +10,7 @@
 </head>
 <body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
     
-    <%- include('../partials/navbar.ejs') %>
+    <%- include('partials/navbar.ejs') %>
 
     <main class="orders-shell">
         <div class="orders-header">
@@ -34,7 +34,7 @@
         </div>
     </main>
 
-    <%- include('../partials/bottom-nav.ejs') %>
+    <%- include('partials/bottom-nav.ejs') %>
 
     <script src="/js/orders.js"></script>
 </body>
