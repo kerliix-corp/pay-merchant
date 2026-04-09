@@ -177,59 +177,89 @@ function renderProductsByCategory(productsToRender) {
   
   container.innerHTML = sortedCategories.map(category => {
     const categoryProducts = productsByCategory[category];
+    const categoryUrl = `/category/${encodeURIComponent(category)}`;
     
     return `
       <section class="category-section">
         <div class="category-header">
-          <h2 class="category-title">
-            <i class="fas fa-tag"></i>
-            ${category}
-          </h2>
-          <p class="category-count">${categoryProducts.length} item${categoryProducts.length !== 1 ? 's' : ''}</p>
+          <div>
+            <h2 class="category-title">
+              <i class="fas fa-tag"></i>
+              ${category}
+            </h2>
+            <p class="category-count">${categoryProducts.length} item${categoryProducts.length !== 1 ? 's' : ''}</p>
+          </div>
+          <a href="${categoryUrl}" class="view-all-link">
+            View All
+            <i class="fas fa-arrow-right"></i>
+          </a>
         </div>
-        <div class="product-grid">
-          ${categoryProducts.map(product => `
-            <article class="product-card">
-              <div class="product-image-wrap">
-                <span class="product-badge">
-                  <i class="fas fa-star"></i>
-                  ${product.badge}
-                </span>
-                <img src="${product.imageUrl}" alt="${product.name}" class="product-image">
-              </div>
-              <div class="product-copy">
-                <div class="product-meta">
-                  <p class="product-sku">
-                    <i class="fas fa-barcode"></i>
-                    ${product.sku}
-                  </p>
-                  <p class="product-price">
-                    <i class="fas fa-dollar-sign"></i>
-                    ${product.price.toFixed(2)}
-                  </p>
+        <div class="horizontal-scroll-container">
+          <div class="product-grid-horizontal">
+            ${categoryProducts.map(product => `
+              <article class="product-card-horizontal" data-product-id="${product.id}">
+                <div class="product-image-wrap">
+                  <span class="product-badge">
+                    <i class="fas fa-star"></i>
+                    ${product.badge}
+                  </span>
+                  <img src="${product.imageUrl}" alt="${product.name}" class="product-image" loading="lazy">
                 </div>
-                <div class="product-retailer">
-                  <i class="fas fa-store"></i>
-                  <span>${product.retailer || 'Direct'}</span>
+                <div class="product-copy">
+                  <div class="product-meta">
+                    <p class="product-sku">
+                      <i class="fas fa-barcode"></i>
+                      ${product.sku}
+                    </p>
+                    <p class="product-price">
+                      <i class="fas fa-dollar-sign"></i>
+                      ${product.price.toFixed(2)}
+                    </p>
+                  </div>
+                  <div class="product-retailer">
+                    <i class="fas fa-store"></i>
+                    <span>${product.retailer || 'Direct'}</span>
+                  </div>
+                  <h3>${product.name}</h3>
+                  <p>${product.description.substring(0, 60)}...</p>
                 </div>
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
-              </div>
-              <button
-                class="primary-button add-to-cart-btn"
-                data-product-id="${product.id}"
-              >
-                <i class="fas fa-cart-plus"></i>
-                Add to cart
-              </button>
-            </article>
-          `).join('')}
+                <button
+                  class="primary-button add-to-cart-btn"
+                  data-product-id="${product.id}"
+                >
+                  <i class="fas fa-cart-plus"></i>
+                  Add to cart
+                </button>
+              </article>
+            `).join('')}
+          </div>
         </div>
       </section>
     `;
   }).join('');
   
   attachAddToCartEvents();
+  attachProductClickEvents();
+}
+
+function attachProductClickEvents() {
+  const productCards = document.querySelectorAll('.product-card-horizontal, .product-card');
+  productCards.forEach(card => {
+    card.removeEventListener('click', handleProductClick);
+    card.addEventListener('click', handleProductClick);
+  });
+}
+
+function handleProductClick(e) {
+  if (e.target.closest('.add-to-cart-btn')) {
+    return;
+  }
+  
+  const card = e.currentTarget;
+  const productId = card.getAttribute('data-product-id');
+  if (productId) {
+    window.location.href = `/product/${productId}`;
+  }
 }
 
 function attachAddToCartEvents() {
@@ -241,6 +271,7 @@ function attachAddToCartEvents() {
 }
 
 function handleAddToCartClick(e) {
+  e.stopPropagation();
   const button = e.currentTarget;
   const productId = button.getAttribute('data-product-id');
   addToCart(productId);
@@ -479,6 +510,35 @@ function initMobileMenu() {
   });
 }
 
+function initCategoryPage() {
+  const sortSelect = document.getElementById('sortBy');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      const grid = document.getElementById('productGrid');
+      if (!grid) return;
+      
+      const products = Array.from(grid.querySelectorAll('.product-card'));
+      const sortValue = this.value;
+      
+      products.sort((a, b) => {
+        const priceA = parseFloat(a.querySelector('.product-price')?.textContent.replace('$', '') || 0);
+        const priceB = parseFloat(b.querySelector('.product-price')?.textContent.replace('$', '') || 0);
+        const nameA = a.querySelector('h3')?.textContent || '';
+        const nameB = b.querySelector('h3')?.textContent || '';
+        
+        if (sortValue === 'price-asc') return priceA - priceB;
+        if (sortValue === 'price-desc') return priceB - priceA;
+        if (sortValue === 'name-asc') return nameA.localeCompare(nameB);
+        return 0;
+      });
+      
+      products.forEach(product => grid.appendChild(product));
+    });
+  }
+  
+  attachProductClickEvents();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   logTrace("dom_content_loaded", {
     path: window.location.pathname,
@@ -489,7 +549,16 @@ document.addEventListener("DOMContentLoaded", () => {
   initMobileMenu();
 
   if (document.querySelector(".product-grid") || document.getElementById("productCategories")) {
-    renderCatalogPage();
+    if (document.getElementById("productCategories")) {
+      renderCatalogPage();
+    } else {
+      attachProductClickEvents();
+      attachAddToCartEvents();
+    }
+  }
+  
+  if (document.getElementById("sortBy")) {
+    initCategoryPage();
   }
 
   if (document.getElementById("cartItems")) {
