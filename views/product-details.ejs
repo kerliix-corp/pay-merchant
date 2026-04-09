@@ -16,7 +16,7 @@
         <div class="breadcrumbs">
             <a href="/">Home</a>
             <i class="fas fa-chevron-right"></i>
-            <a href="/category/<%= product.category %>"><%= product.category %></a>
+            <a href="/category/<%= encodeURIComponent(product.category) %>"><%= product.category %></a>
             <i class="fas fa-chevron-right"></i>
             <span><%= product.name %></span>
         </div>
@@ -26,66 +26,188 @@
                 <div class="main-image">
                     <img src="<%= product.imageUrl %>" alt="<%= product.name %>" id="mainProductImage">
                 </div>
+                <% if (product.galleryImages && product.galleryImages.length > 0) { %>
+                <div class="thumbnail-gallery">
+                    <div class="thumbnail active" data-image="<%= product.imageUrl %>">
+                        <img src="<%= product.imageUrl %>" alt="Main view">
+                    </div>
+                    <% product.galleryImages.forEach(image => { %>
+                    <div class="thumbnail" data-image="<%= image %>">
+                        <img src="<%= image %>" alt="Product view">
+                    </div>
+                    <% }); %>
+                </div>
+                <% } %>
             </div>
 
             <div class="product-info">
                 <div class="product-retailer-badge">
                     <i class="fas fa-store"></i>
                     Sold by: <strong><%= product.retailer %></strong>
+                    <% if (product.retailerRating) { %>
+                    <span class="retailer-rating">
+                        <i class="fas fa-star"></i> <%= product.retailerRating %>
+                    </span>
+                    <% } %>
                 </div>
+                
                 <h1><%= product.name %></h1>
-                <div class="product-sku-details">SKU: <%= product.sku %></div>
-                <div class="product-badge-detail">
-                    <span class="badge"><%= product.badge %></span>
+                
+                <div class="product-rating-section">
+                    <div class="stars">
+                        <% for(let i = 1; i <= 5; i++) { %>
+                            <% if (i <= Math.floor(product.rating || 4.5)) { %>
+                                <i class="fas fa-star"></i>
+                            <% } else if (i <= Math.ceil(product.rating || 4.5) && (product.rating || 4.5) % 1 !== 0) { %>
+                                <i class="fas fa-star-half-alt"></i>
+                            <% } else { %>
+                                <i class="far fa-star"></i>
+                            <% } %>
+                        <% } %>
+                        <span class="rating-value"><%= (product.rating || 4.5).toFixed(1) %></span>
+                    </div>
+                    <span class="review-count">
+                        <i class="fas fa-comments"></i> <%= (product.reviewCount || 0).toLocaleString() %> reviews
+                    </span>
                 </div>
+                
+                <div class="product-sku-details">
+                    <i class="fas fa-barcode"></i> SKU: <%= product.sku %>
+                </div>
+                
+                <div class="product-badge-detail">
+                    <span class="badge <%= product.badge.toLowerCase().replace(/\s+/g, '-') %>">
+                        <i class="fas fa-tag"></i> <%= product.badge %>
+                    </span>
+                </div>
+                
                 <div class="product-price-detail">
                     $<%= product.price.toFixed(2) %>
+                    <% if (product.originalPrice) { %>
+                    <span class="original-price">$<%= product.originalPrice.toFixed(2) %></span>
+                    <span class="discount-badge">
+                        <%= Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) %>% OFF
+                    </span>
+                    <% } %>
                 </div>
+                
+                <div class="product-stock-info">
+                    <% if (product.inStock && product.stockCount > 0) { %>
+                        <div class="in-stock">
+                            <i class="fas fa-check-circle"></i> In Stock
+                            <% if (product.stockCount < 50) { %>
+                            <span class="stock-warning">Only <%= product.stockCount %> left!</span>
+                            <% } else { %>
+                            <span class="stock-count"><%= product.stockCount %> units available</span>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <div class="out-of-stock">
+                            <i class="fas fa-times-circle"></i> Out of Stock
+                        </div>
+                    <% } %>
+                </div>
+                
                 <div class="product-description-detail">
-                    <h3>Description</h3>
+                    <h3><i class="fas fa-align-left"></i> Description</h3>
                     <p><%= product.description %></p>
                 </div>
                 
+                <% if (product.features && product.features.length > 0) { %>
+                <div class="product-features">
+                    <h3><i class="fas fa-list-check"></i> Key Features</h3>
+                    <ul>
+                        <% product.features.forEach(feature => { %>
+                        <li><i class="fas fa-check"></i> <%= feature %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <% } %>
+                
                 <div class="product-actions">
-                    <button class="primary-button add-to-cart-btn" data-product-id="<%= product.id %>">
-                        <i class="fas fa-cart-plus"></i>
-                        Add to Cart
-                    </button>
-                    <button class="secondary-button add-to-wishlist-btn" data-product-id="<%= product.id %>">
-                        <i class="far fa-heart"></i>
-                        Add to Wishlist
-                    </button>
+                    <div class="quantity-selector">
+                        <label for="quantity"><i class="fas fa-cubes"></i> Quantity:</label>
+                        <div class="quantity-controls">
+                            <button class="qty-decrease" id="decreaseQty">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" id="quantity" value="1" min="1" max="<%= product.inStock ? product.stockCount : 0 %>" readonly>
+                            <button class="qty-increase" id="increaseQty">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="primary-button add-to-cart-btn" data-product-id="<%= product.id %>" <%= !product.inStock ? 'disabled' : '' %>>
+                            <i class="fas fa-cart-plus"></i>
+                            <%= product.inStock ? 'Add to Cart' : 'Out of Stock' %>
+                        </button>
+                        <button class="secondary-button add-to-wishlist-btn" data-product-id="<%= product.id %>">
+                            <i class="far fa-heart"></i>
+                            Add to Wishlist
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="product-meta-footer">
+                    <div class="meta-item">
+                        <i class="fas fa-truck-fast"></i>
+                        <span>Free shipping on orders over $50</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-undo-alt"></i>
+                        <span>30-day returns</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secure checkout</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="related-products">
-            <h2>You Might Also Like</h2>
-            <div class="product-grid">
-                <% const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4); %>
-                <% relatedProducts.forEach(related => { %>
-                    <article class="product-card" data-product-id="<%= related.id %>">
-                        <div class="product-image-wrap">
-                            <span class="product-badge">
-                                <i class="fas fa-star"></i>
-                                <%= related.badge %>
-                            </span>
-                            <img src="<%= related.imageUrl %>" alt="<%= related.name %>" class="product-image">
-                        </div>
-                        <div class="product-copy">
-                            <div class="product-meta">
-                                <p class="product-sku"><%= related.sku %></p>
-                                <p class="product-price">$<%= related.price.toFixed(2) %></p>
+            <h2><i class="fas fa-heart"></i> You Might Also Like</h2>
+            <div class="horizontal-scroll-container">
+                <div class="product-grid-horizontal">
+                    <% const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 8); %>
+                    <% relatedProducts.forEach(related => { %>
+                        <article class="product-card-horizontal" data-product-id="<%= related.id %>">
+                            <div class="product-image-wrap">
+                                <span class="product-badge">
+                                    <i class="fas fa-star"></i>
+                                    <%= related.badge %>
+                                </span>
+                                <img src="<%= related.imageUrl %>" alt="<%= related.name %>" class="product-image" loading="lazy">
                             </div>
-                            <h3><%= related.name %></h3>
-                            <p><%= related.description.substring(0, 80) %>...</p>
-                        </div>
-                        <button class="primary-button add-to-cart-btn" data-product-id="<%= related.id %>">
-                            <i class="fas fa-cart-plus"></i>
-                            Add to cart
-                        </button>
-                    </article>
-                <% }) %>
+                            <div class="product-copy">
+                                <div class="product-meta">
+                                    <p class="product-sku"><%= related.sku %></p>
+                                    <p class="product-price">$<%= related.price.toFixed(2) %></p>
+                                </div>
+                                <div class="product-rating-mini">
+                                    <div class="stars-mini">
+                                        <% for(let i = 1; i <= 5; i++) { %>
+                                            <% if (i <= Math.floor(related.rating || 4.5)) { %>
+                                                <i class="fas fa-star"></i>
+                                            <% } else { %>
+                                                <i class="far fa-star"></i>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+                                    <span>(<%= (related.reviewCount || 0).toLocaleString() %>)</span>
+                                </div>
+                                <h3><%= related.name %></h3>
+                                <p><%= related.description.substring(0, 60) %>...</p>
+                            </div>
+                            <button class="primary-button add-to-cart-btn" data-product-id="<%= related.id %>">
+                                <i class="fas fa-cart-plus"></i>
+                                Add to cart
+                            </button>
+                        </article>
+                    <% }) %>
+                </div>
             </div>
         </div>
     </main>
@@ -95,6 +217,72 @@
     <script>
         window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quantity selector functionality
+            const quantityInput = document.getElementById('quantity');
+            const decreaseBtn = document.getElementById('decreaseQty');
+            const increaseBtn = document.getElementById('increaseQty');
+            const maxStock = <%= product.inStock ? product.stockCount : 0 %>;
+            
+            if (decreaseBtn && increaseBtn && quantityInput) {
+                decreaseBtn.addEventListener('click', () => {
+                    let currentVal = parseInt(quantityInput.value);
+                    if (currentVal > 1) {
+                        quantityInput.value = currentVal - 1;
+                    }
+                });
+                
+                increaseBtn.addEventListener('click', () => {
+                    let currentVal = parseInt(quantityInput.value);
+                    if (currentVal < maxStock) {
+                        quantityInput.value = currentVal + 1;
+                    }
+                });
+            }
+            
+            // Override add to cart to include quantity
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            const originalAddToCart = window.addToCart;
+            
+            if (addToCartBtn && originalAddToCart) {
+                const newAddToCart = addToCartBtn.cloneNode(true);
+                addToCartBtn.parentNode.replaceChild(newAddToCart, addToCartBtn);
+                
+                newAddToCart.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const productId = this.getAttribute('data-product-id');
+                    const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+                    
+                    for(let i = 0; i < quantity; i++) {
+                        originalAddToCart(productId);
+                    }
+                    
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Added ' + (quantity > 1 ? `(${quantity})` : '');
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 1500);
+                });
+            }
+            
+            // Thumbnail gallery
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            const mainImage = document.getElementById('mainProductImage');
+            
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    const imageUrl = this.getAttribute('data-image');
+                    if (mainImage && imageUrl) {
+                        mainImage.src = imageUrl;
+                        thumbnails.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
     <script src="/js/store.js"></script>
 </body>
 </html>
+
