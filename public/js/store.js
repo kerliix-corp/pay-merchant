@@ -40,6 +40,13 @@ function syncCartBadge() {
   if (bottomBadge) {
     bottomBadge.textContent = String(getCartCount());
   }
+  
+  const mobileBadge = document.getElementById("mobileCartBadge");
+  if (mobileBadge) {
+    const count = getCartCount();
+    mobileBadge.textContent = String(count);
+    mobileBadge.style.display = count > 0 ? "inline-flex" : "none";
+  }
 }
 
 function addToCart(productId) {
@@ -427,6 +434,51 @@ async function createPaymentSession() {
   }
 }
 
+function initMobileMenu() {
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  
+  if (!mobileMenuToggle || !mobileMenu) return;
+  
+  const menuIcon = mobileMenuToggle.querySelector('i');
+  
+  function toggleMenu() {
+    mobileMenu.classList.toggle('open');
+    
+    if (mobileMenu.classList.contains('open')) {
+      menuIcon.classList.remove('fa-bars');
+      menuIcon.classList.add('fa-times');
+      document.body.style.overflow = 'hidden';
+    } else {
+      menuIcon.classList.remove('fa-times');
+      menuIcon.classList.add('fa-bars');
+      document.body.style.overflow = '';
+    }
+  }
+  
+  mobileMenuToggle.addEventListener('click', toggleMenu);
+  
+  mobileMenu.addEventListener('click', function(e) {
+    if (e.target === mobileMenu) {
+      toggleMenu();
+    }
+  });
+  
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', function() {
+      if (mobileMenu.classList.contains('open')) {
+        toggleMenu();
+      }
+    });
+  });
+  
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+      toggleMenu();
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   logTrace("dom_content_loaded", {
     path: window.location.pathname,
@@ -434,6 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cartCount: getCartCount()
   });
   syncCartBadge();
+  initMobileMenu();
 
   if (document.querySelector(".product-grid") || document.getElementById("productCategories")) {
     renderCatalogPage();
@@ -447,4 +500,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
-
