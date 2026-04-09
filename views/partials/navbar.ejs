@@ -5,6 +5,10 @@
             <%= merchantName %>
         </a>
         
+        <button class="mobile-menu-toggle" aria-label="Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        
         <div class="nav-actions">
             <a href="/search" class="nav-icon">
                 <i class="fas fa-search"></i>
@@ -25,3 +29,28 @@
         </div>
     </div>
 </nav>
+
+<div class="mobile-menu">
+    <div class="mobile-menu-inner">
+        <div class="mobile-menu-header">
+            <span class="mobile-menu-title">Menu</span>
+        </div>
+        <a href="/search" class="mobile-link">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </a>
+        <a href="/cart" class="mobile-link">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Cart</span>
+            <span id="mobileCartBadge" class="cart-badge mobile-cart-badge">0</span>
+        </a>
+        <a href="/user/notifications" class="mobile-link">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+        </a>
+        <a href="/user/profile" class="mobile-link">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
+        </a>
+    </div>
+</div>
