@@ -560,35 +560,4 @@ export const products = [
     inStock: true,
     stockCount: 678
   },
-
-  {
-    id: "wireless-headset-pro",
-    sku: "AUDIO-101",
-    name: "Wireless Headset Pro",
-    description: "Hybrid ANC headset with 40-hour battery life and crystal-clear calls.",
-    price: 189.99,
-    imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
-    badge: "Best Seller",
-    category: "Audio",
-    retailer: "SoundMaster Electronics",
-    rating: 4.8,
-    reviewCount: 3456,
-    inStock: true,
-    stockCount: 456
-  },
-  {
-    id: "travel-tech-organizer",
-    sku: "TRVL-204",
-    name: "Travel Tech Organizer",
-    description: "Structured carry case for chargers, cables, SSDs, and adapters.",
-    price: 48.50,
-    imageUrl: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80",
-    badge: "New",
-    category: "Accessories",
-    retailer: "WanderGear Co.",
-    rating: 4.5,
-    reviewCount: 1234,
-    inStock: true,
-    stockCount: 234
-  }
 ];

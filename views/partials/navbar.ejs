@@ -4,11 +4,18 @@
             <i class="fas fa-store"></i>
             <%= merchantName %>
         </a>
-        
-        <button class="mobile-menu-toggle" aria-label="Menu">
-            <i class="fas fa-bars"></i>
-        </button>
-        
+
+        <div class="mobile-actions">
+            <a href="/cart" class="cart-link mobile-cart-link" aria-label="Cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="mobileCartBadge" class="cart-badge">0</span>
+            </a>
+
+            <button class="mobile-menu-toggle" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
         <div class="nav-actions">
             <a href="/search" class="nav-icon">
                 <i class="fas fa-search"></i>
@@ -38,11 +45,6 @@
         <a href="/search" class="mobile-link">
             <i class="fas fa-search"></i>
             <span>Search</span>
-        </a>
-        <a href="/cart" class="mobile-link">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Cart</span>
-            <span id="mobileCartBadge" class="cart-badge mobile-cart-badge">0</span>
         </a>
         <a href="/user/notifications" class="mobile-link">
             <i class="fas fa-bell"></i>

@@ -314,20 +314,6 @@ function initAccount() {
     });
   }
   
-  const navBtns = document.querySelectorAll('.account-nav-btn');
-  navBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      navBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      const tabId = btn.dataset.tab;
-      document.querySelectorAll('.account-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.getElementById(`${tabId}Tab`).classList.add('active');
-    });
-  });
-  
   renderAddresses();
   renderPaymentMethods();
 }
@@ -335,5 +321,4 @@ function initAccount() {
 document.addEventListener('DOMContentLoaded', () => {
   initAccount();
 });
-
 

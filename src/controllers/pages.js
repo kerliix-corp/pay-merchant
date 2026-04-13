@@ -9,6 +9,10 @@ function getViewModel() {
   return { merchantName, paymentAppUrl, appBaseUrl, products };
 }
 
+function getUser(req) {
+  return req.ssoUser || req.user || null;
+}
+
 export const renderHome = (req, res) => {
   res.render("index", {
     ...getViewModel(),
@@ -58,7 +62,8 @@ export const renderAccount = (req, res) => {
   res.render("account", {
     ...getViewModel(),
     title: `${merchantName} | Account`,
-    user: req.user || null
+    user: getUser(req),
+    activeAccountTab: null
   });
 };
 
@@ -75,7 +80,39 @@ export const renderProfile = (req, res) => {
   res.render("profile", {
     ...getViewModel(),
     title: `${merchantName} | Profile`,
-    user: req.user || null
+    user: getUser(req)
+  });
+};
+
+export const renderAddresses = (req, res) => {
+  res.render("addresses", {
+    ...getViewModel(),
+    title: `${merchantName} | Addresses`,
+    user: getUser(req)
+  });
+};
+
+export const renderPayment = (req, res) => {
+  res.render("payment", {
+    ...getViewModel(),
+    title: `${merchantName} | Payment Methods`,
+    user: getUser(req)
+  });
+};
+
+export const renderSecurity = (req, res) => {
+  res.render("security", {
+    ...getViewModel(),
+    title: `${merchantName} | Security`,
+    user: getUser(req)
+  });
+};
+
+export const renderPreferences = (req, res) => {
+  res.render("preferences", {
+    ...getViewModel(),
+    title: `${merchantName} | Preferences`,
+    user: getUser(req)
   });
 };
 

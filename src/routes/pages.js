@@ -4,10 +4,14 @@ import {
   renderRetailers,
   renderOrders,
   renderAccount,
+  renderAddresses,
+  renderPayment,
+  renderPreferences,
+  renderProfile,
   renderSearch,
+  renderSecurity,
   renderCart,
   renderNotifications,
-  renderProfile,
   renderProductDetails,
   renderCategory,
   renderWishlist,
@@ -27,11 +31,14 @@ router.get("/retailers", optionalSSO, renderRetailers);
 router.get("/cart", optionalSSO, renderCart);
 router.get("/wishlist", requireSSO, renderWishlist);
 router.get("/user/orders", requireSSO, renderOrders);
+router.get("/user/profile", requireSSO, renderProfile);
+router.get("/user/addresses", requireSSO, renderAddresses);
+router.get("/user/payment", requireSSO, renderPayment);
+router.get("/user/security", requireSSO, renderSecurity);
+router.get("/user/preferences", requireSSO, renderPreferences);
 router.get("/user/account", requireSSO, renderAccount);
 router.get("/user/notifications", requireSSO, renderNotifications);
-router.get("/user/profile", requireSSO, renderProfile);
 router.get("/checkout/success", requireSSO, renderCheckoutSuccess);
 router.get("/checkout/cancel", requireSSO, renderCheckoutCancel);
 
 export default router;
-

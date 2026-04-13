@@ -510,6 +510,46 @@ function initMobileMenu() {
   });
 }
 
+function initDesktopSidebar() {
+  const sidebar = document.querySelector('.bottom-nav');
+  const toggle = document.querySelector('.sidebar-toggle');
+
+  if (!sidebar || !toggle) return;
+
+  const desktopQuery = window.matchMedia('(min-width: 769px)');
+  const storageKey = 'kerliix-desktop-sidebar-collapsed';
+
+  function applyDesktopState() {
+    if (!desktopQuery.matches) {
+      document.body.classList.remove('sidebar-collapsed');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Expand sidebar');
+      return;
+    }
+
+    const collapsed = window.localStorage.getItem(storageKey) === 'true';
+    document.body.classList.toggle('sidebar-collapsed', collapsed);
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    toggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+  }
+
+  toggle.addEventListener('click', () => {
+    if (!desktopQuery.matches) return;
+
+    const nextCollapsed = !document.body.classList.contains('sidebar-collapsed');
+    window.localStorage.setItem(storageKey, String(nextCollapsed));
+    applyDesktopState();
+  });
+
+  if (typeof desktopQuery.addEventListener === 'function') {
+    desktopQuery.addEventListener('change', applyDesktopState);
+  } else if (typeof desktopQuery.addListener === 'function') {
+    desktopQuery.addListener(applyDesktopState);
+  }
+
+  applyDesktopState();
+}
+
 function initCategoryPage() {
   const sortSelect = document.getElementById('sortBy');
   if (sortSelect) {
@@ -547,6 +587,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   syncCartBadge();
   initMobileMenu();
+  initDesktopSidebar();
 
   if (document.querySelector(".product-grid") || document.getElementById("productCategories")) {
     if (document.getElementById("productCategories")) {

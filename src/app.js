@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import cookieParser from "cookie-parser";
 import routes from "./routes/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,6 +19,8 @@ app.use(express.json({
     req.rawBody = buffer.toString("utf8");
   }
 }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   const startedAt = Date.now();

@@ -1,7 +1,16 @@
 import jwt from 'jsonwebtoken';
 
-const ACCOUNTS_BASE = 'https://accounts.kerliix.com';
 const APP_SOURCE = 'Kerliix shop';
+
+function getAccountsBaseUrl() {
+  if (process.env.AUTH_BASE_URL) {
+    return process.env.AUTH_BASE_URL;
+  }
+
+  return process.env.NODE_ENV === 'production'
+    ? 'https://accounts.kerliix.com'
+    : 'http://localhost:3000';
+}
 
 function buildReturnUrl(req) {
   return `${req.protocol}://${req.get('host')}${req.originalUrl}`;
@@ -9,11 +18,11 @@ function buildReturnUrl(req) {
 
 function buildLoginUrl(req) {
   const redirect = encodeURIComponent(buildReturnUrl(req));
-  return `${ACCOUNTS_BASE}/auth/login?redirect=${redirect}&source=${APP_SOURCE}`;
+  return `${getAccountsBaseUrl()}/auth/login?redirect=${redirect}&source=${APP_SOURCE}`;
 }
 
 async function fetchCurrentUser(token) {
-  const response = await fetch(`${ACCOUNTS_BASE}/auth/me`, {
+  const response = await fetch(`${getAccountsBaseUrl()}/auth/me`, {
     headers: {
       Cookie: `token=${token}`,
       Accept: 'application/json'
@@ -74,5 +83,5 @@ export async function optionalSSO(req, res, next) {
 
 export function redirectToCentralLogout(req, res) {
   const returnTo = encodeURIComponent(`${req.protocol}://${req.get('host')}/`);
-  return res.redirect(`${ACCOUNTS_BASE}/auth/logout?returnTo=${returnTo}`);
+  return res.redirect(`${getAccountsBaseUrl()}/auth/logout?returnTo=${returnTo}`);
 }
