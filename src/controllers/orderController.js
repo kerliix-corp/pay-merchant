@@ -5,6 +5,7 @@ import Cart from "../models/Cart.js";
 import Notification from "../models/Notification.js";
 import WebhookEvent from "../models/WebhookEvent.js";
 import { isValidSignature } from "../services/webhookSignature.js";
+import { convertUsdToUgx } from "../utils/viewHelpers.js";
 import {
   sendOrderConfirmation,
   sendPaymentConfirmation,
@@ -24,12 +25,20 @@ function generateMerchantOrderId() {
   return `mord_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
 }
 
+function normalizeItemsToUgx(items = []) {
+  return items.map((item) => ({
+    ...item,
+    price: Math.round(convertUsdToUgx(item.price || 0))
+  }));
+}
+
 function calculateOrderTotals(items, shippingCost = 5.99, taxRate = 0) {
-  const subtotal = items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 0), 0);
-  const shipping = Number(shippingCost);
+  const normalizedItems = normalizeItemsToUgx(items);
+  const subtotal = normalizedItems.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 0), 0);
+  const shipping = Math.round(convertUsdToUgx(Number(shippingCost)));
   const tax = Number((subtotal * taxRate).toFixed(2));
   const total = Number((subtotal + shipping + tax).toFixed(2));
-  return { subtotal, shipping, tax, total };
+  return { normalizedItems, subtotal, shipping, tax, total };
 }
 
 export const createCheckoutSession = async (req, res) => {
@@ -49,7 +58,7 @@ export const createCheckoutSession = async (req, res) => {
   }
 
   const merchantOrderId = generateMerchantOrderId();
-  const { subtotal, shipping, tax, total } = calculateOrderTotals(items);
+  const { normalizedItems, subtotal, shipping, tax, total } = calculateOrderTotals(items);
 
   const order = new Order({
     merchantOrderId,
@@ -64,8 +73,8 @@ export const createCheckoutSession = async (req, res) => {
     shipping,
     tax,
     total,
-    currency: "USD",
-    items: items.map(item => ({
+    currency: "UGX",
+    items: normalizedItems.map(item => ({
       id: item.id,
       sku: item.sku,
       name: item.name,
@@ -88,8 +97,8 @@ export const createCheckoutSession = async (req, res) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         merchant: merchantName,
-        currency: "USD",
-        items,
+        currency: "UGX",
+        items: normalizedItems,
         metadata: { 
           merchantOrderId, 
           merchantWebhookUrl: webhookUrl,
@@ -584,5 +593,4 @@ export const getOrderStats = async (req, res) => {
 export const healthCheck = (req, res) => {
   res.json({ ok: true, service: "merchant", timestamp: new Date().toISOString() });
 };
-
 

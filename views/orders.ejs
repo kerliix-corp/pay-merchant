@@ -36,6 +36,9 @@
 
     <%- include('partials/bottom-nav.ejs') %>
 
+    <script>
+        window.__ORDERS__ = <%- JSON.stringify(orders || []) %>;
+    </script>
     <script src="/js/orders.js"></script>
 </body>
 </html>

@@ -1,0 +1,18 @@
+<nav class="retailer-bottom-nav">
+    <a href="/retailer/dashboard" class="retailer-bottom-item <%= activeRetailerTab === 'dashboard' ? 'active' : '' %>">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="/retailer/products" class="retailer-bottom-item <%= activeRetailerTab === 'products' ? 'active' : '' %>">
+        <i class="fas fa-box-open"></i>
+        <span>Products</span>
+    </a>
+    <a href="/retailer/orders" class="retailer-bottom-item <%= activeRetailerTab === 'orders' ? 'active' : '' %>">
+        <i class="fas fa-bag-shopping"></i>
+        <span>Orders</span>
+    </a>
+    <a href="/retailer/payouts" class="retailer-bottom-item <%= activeRetailerTab === 'payouts' ? 'active' : '' %>">
+        <i class="fas fa-wallet"></i>
+        <span>Payouts</span>
+    </a>
+</nav>

@@ -22,15 +22,31 @@
 
         <div class="account-sidebar">
             <div class="user-avatar">
-                <i class="fas fa-user-circle"></i>
-                <h3 id="userName">Guest User</h3>
-                <p id="userEmail">guest@example.com</p>
+                <% if (user) { %>
+                    <div class="user-avatar-initials"><%= user.initials %></div>
+                    <h3 id="userName"><%= user.fullName %></h3>
+                    <p id="userEmail"><%= user.email %></p>
+                <% } else { %>
+                    <i class="fas fa-user-circle"></i>
+                    <h3 id="userName">Guest User</h3>
+                    <p id="userEmail">guest@example.com</p>
+                <% } %>
             </div>
 
             <nav class="account-nav">
+                <a href="/user/account" class="account-nav-btn <%= activeAccountTab === 'account' ? 'active' : '' %>">
+                    <i class="fas fa-grid-2"></i>
+                    Overview
+                </a>
+
                 <a href="/user/profile" class="account-nav-btn <%= activeAccountTab === 'profile' ? 'active' : '' %>">
                     <i class="fas fa-user"></i>
                     Profile
+                </a>
+
+                <a href="/retailer/dashboard" class="account-nav-btn <%= activeAccountTab === 'retailer' ? 'active' : '' %>">
+                    <i class="fas fa-store"></i>
+                    Retailer Dash
                 </a>
 
                 <a href="/user/addresses" class="account-nav-btn <%= activeAccountTab === 'addresses' ? 'active' : '' %>">
@@ -54,10 +70,53 @@
                 </a>
             </nav>
         </div>
+
+        <div class="account-content">
+            <section class="account-tab active">
+                <h2>Account Overview</h2>
+
+                <div class="account-summary-grid">
+                    <div class="summary-card">
+                        <span>Name</span>
+                        <strong><%= user ? user.fullName : 'Guest User' %></strong>
+                    </div>
+                    <div class="summary-card">
+                        <span>Email</span>
+                        <strong><%= user?.email || 'Not available' %></strong>
+                    </div>
+                    <div class="summary-card">
+                        <span>Phone</span>
+                        <strong><%= user?.phone || 'Not provided' %></strong>
+                    </div>
+                    <div class="summary-card">
+                        <span>Preferred currency</span>
+                        <strong><%= user?.preferences?.currency || currencyCode %></strong>
+                    </div>
+                </div>
+
+                <div class="account-detail-grid">
+                    <div class="account-detail-card">
+                        <div class="detail-label">Retailer dashboard</div>
+                        <div class="detail-value"><%= user?.retailerName || 'Retail account' %></div>
+                    </div>
+                    <div class="account-detail-card">
+                        <div class="detail-label">Saved addresses</div>
+                        <div class="detail-value"><%= user?.addresses?.length || 0 %></div>
+                    </div>
+                    <div class="account-detail-card">
+                        <div class="detail-label">Saved payment methods</div>
+                        <div class="detail-value"><%= user?.paymentMethods?.length || 0 %></div>
+                    </div>
+                    <div class="account-detail-card">
+                        <div class="detail-label">Login status</div>
+                        <div class="detail-value"><%= user ? 'Authenticated' : 'Guest' %></div>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <%- include('partials/bottom-nav.ejs') %>
 
-    <script src="/js/account.js"></script>
 </body>
 </html>

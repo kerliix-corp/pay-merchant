@@ -31,6 +31,21 @@
   margin-bottom: 12px;
 }
 
+.user-avatar-initials {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 .user-avatar h3 {
   margin: 0 0 4px 0;
   font-size: 1.2rem;
@@ -190,6 +205,77 @@
 .icon-btn:hover {
   background: rgba(210, 105, 60, 0.1);
   color: var(--accent);
+}
+
+.account-summary-grid,
+.retailer-metrics-grid,
+.retailer-products-grid,
+.retailer-orders-list {
+  display: grid;
+  gap: 16px;
+}
+
+.account-summary-grid,
+.retailer-metrics-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 24px;
+}
+
+.summary-card,
+.retailer-metric-card,
+.retailer-product-card,
+.retailer-order-card,
+.account-detail-card {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.summary-card strong,
+.retailer-metric-card strong {
+  display: block;
+  font-size: 1.5rem;
+  margin-top: 8px;
+}
+
+.summary-card span,
+.retailer-metric-card span,
+.detail-label,
+.retailer-order-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.account-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.detail-value {
+  margin-top: 8px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.retailer-section-title {
+  margin: 32px 0 16px;
+  font-size: 1.15rem;
+}
+
+.retailer-products-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.retailer-product-card h3,
+.retailer-order-card h3 {
+  margin: 0 0 8px;
+}
+
+.retailer-order-items {
+  margin: 12px 0 0;
+  padding-left: 18px;
 }
 
 @media (max-width: 768px) {

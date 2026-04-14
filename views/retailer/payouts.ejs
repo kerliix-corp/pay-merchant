@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/retailer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/retailer-navbar.ejs') %>
+
+    <main class="retailer-shell">
+        <section class="retailer-page-header">
+            <div>
+                <p class="retailer-eyebrow">Payouts</p>
+                <h1>Earnings and settlement view</h1>
+                <p class="retailer-subtitle">A lightweight payout page based on current paid-order performance.</p>
+            </div>
+            <div class="retailer-hero-card compact">
+                <span>Paid revenue</span>
+                <strong><%= formatCurrency(retailerMetrics.paidRevenue, currencyCode) %></strong>
+            </div>
+        </section>
+
+        <section class="retailer-metrics-grid">
+            <article class="retailer-panel metric">
+                <span>Available</span>
+                <strong><%= formatCurrency(retailerPayouts.available, currencyCode) %></strong>
+            </article>
+            <article class="retailer-panel metric">
+                <span>Processing</span>
+                <strong><%= formatCurrency(retailerPayouts.processing, currencyCode) %></strong>
+            </article>
+            <article class="retailer-panel metric">
+                <span>Reserves</span>
+                <strong><%= formatCurrency(retailerPayouts.reserves, currencyCode) %></strong>
+            </article>
+        </section>
+
+        <section class="retailer-panel">
+            <div class="retailer-section-head">
+                <h2>Settlement Notes</h2>
+            </div>
+            <div class="retailer-highlight-stack">
+                <div class="retailer-highlight-row">
+                    <span>Paid orders counted</span>
+                    <strong><%= retailerMetrics.paidOrderCount %></strong>
+                </div>
+                <div class="retailer-highlight-row">
+                    <span>Total retailer orders</span>
+                    <strong><%= retailerMetrics.orderCount %></strong>
+                </div>
+                <div class="retailer-highlight-row">
+                    <span>Latest processing batch</span>
+                    <strong><%= retailerOrders[0]?.merchantOrderId ? '#' + retailerOrders[0].merchantOrderId : 'No batch yet' %></strong>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('../partials/retailer-bottom-nav.ejs') %>
+</body>
+</html>

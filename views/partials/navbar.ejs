@@ -31,7 +31,11 @@
             </a>
 
             <a href="/user/profile" class="nav-icon">
-                <i class="fas fa-user-circle"></i>
+                <% if (currentUser) { %>
+                    <span class="nav-avatar-initials"><%= currentUser.initials %></span>
+                <% } else { %>
+                    <i class="fas fa-user-circle"></i>
+                <% } %>
             </a>
         </div>
     </div>
@@ -51,8 +55,12 @@
             <span>Notifications</span>
         </a>
         <a href="/user/profile" class="mobile-link">
-            <i class="fas fa-user-circle"></i>
-            <span>Profile</span>
+            <% if (currentUser) { %>
+                <span class="mobile-avatar-initials"><%= currentUser.initials %></span>
+            <% } else { %>
+                <i class="fas fa-user-circle"></i>
+            <% } %>
+            <span><%= currentUser ? currentUser.fullName : 'Profile' %></span>
         </a>
     </div>
 </div>

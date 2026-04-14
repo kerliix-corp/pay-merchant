@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { getUserView } from "../utils/viewHelpers.js";
 
 const APP_SOURCE = 'Kerliix shop';
 
@@ -54,6 +55,7 @@ export async function requireSSO(req, res, next) {
 
     req.ssoUser = user;
     res.locals.ssoUser = user;
+    res.locals.currentUser = getUserView(user);
     next();
   } catch (error) {
     return res.redirect(buildLoginUrl(req));
@@ -66,6 +68,7 @@ export async function optionalSSO(req, res, next) {
 
     if (!token) {
       res.locals.ssoUser = null;
+      res.locals.currentUser = null;
       return next();
     }
 
@@ -74,9 +77,11 @@ export async function optionalSSO(req, res, next) {
     const user = await fetchCurrentUser(token);
     req.ssoUser = user;
     res.locals.ssoUser = user;
+    res.locals.currentUser = getUserView(user);
     next();
   } catch (error) {
     res.locals.ssoUser = null;
+    res.locals.currentUser = null;
     next();
   }
 }

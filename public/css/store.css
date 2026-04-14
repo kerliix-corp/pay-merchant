@@ -269,6 +269,31 @@ input {
   color: var(--accent);
 }
 
+.nav-avatar-initials,
+.mobile-avatar-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.nav-avatar-initials {
+  width: 40px;
+  height: 40px;
+  font-size: 0.85rem;
+}
+
+.mobile-avatar-initials {
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
 .bottom-nav {
   position: fixed;
   bottom: 0;

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/retailer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/retailer-navbar.ejs') %>
+
+    <main class="retailer-shell">
+        <section class="retailer-hero">
+            <div>
+                <p class="retailer-eyebrow">Retailer Dashboard</p>
+                <h1><%= retailerName %></h1>
+                <p class="retailer-subtitle">Track store performance, watch recent orders, and keep inventory moving from one place.</p>
+            </div>
+            <div class="retailer-hero-card">
+                <span>Available balance</span>
+                <strong><%= formatCurrency(retailerPayouts.available, currencyCode) %></strong>
+                <p><%= retailerMetrics.paidOrderCount %> paid order<%= retailerMetrics.paidOrderCount === 1 ? '' : 's' %> contributing to your current payout window.</p>
+            </div>
+        </section>
+
+        <section class="retailer-metrics-grid">
+            <article class="retailer-panel metric">
+                <span>Products</span>
+                <strong><%= retailerMetrics.productCount %></strong>
+            </article>
+            <article class="retailer-panel metric">
+                <span>Total Orders</span>
+                <strong><%= retailerMetrics.orderCount %></strong>
+            </article>
+            <article class="retailer-panel metric">
+                <span>Units Sold</span>
+                <strong><%= retailerMetrics.totalUnitsSold %></strong>
+            </article>
+            <article class="retailer-panel metric">
+                <span>Paid Revenue</span>
+                <strong><%= formatCurrency(retailerMetrics.paidRevenue, currencyCode) %></strong>
+            </article>
+        </section>
+
+        <section class="retailer-grid">
+            <article class="retailer-panel">
+                <div class="retailer-section-head">
+                    <h2>Store Highlights</h2>
+                    <a href="/retailer/products">Manage products</a>
+                </div>
+
+                <div class="retailer-highlight-stack">
+                    <div class="retailer-highlight-row">
+                        <span>Top stocked item</span>
+                        <strong><%= retailerHighlights.topProduct?.name || 'No products yet' %></strong>
+                    </div>
+                    <div class="retailer-highlight-row">
+                        <span>Low stock alerts</span>
+                        <strong><%= retailerMetrics.lowStockCount %> item<%= retailerMetrics.lowStockCount === 1 ? '' : 's' %></strong>
+                    </div>
+                    <div class="retailer-highlight-row">
+                        <span>Latest order</span>
+                        <strong><%= retailerHighlights.latestOrder?.merchantOrderId ? '#' + retailerHighlights.latestOrder.merchantOrderId : 'No recent orders' %></strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="retailer-panel">
+                <div class="retailer-section-head">
+                    <h2>Payout Snapshot</h2>
+                    <a href="/retailer/payouts">View payouts</a>
+                </div>
+
+                <div class="retailer-payout-list">
+                    <div>
+                        <span>Available</span>
+                        <strong><%= formatCurrency(retailerPayouts.available, currencyCode) %></strong>
+                    </div>
+                    <div>
+                        <span>Processing</span>
+                        <strong><%= formatCurrency(retailerPayouts.processing, currencyCode) %></strong>
+                    </div>
+                    <div>
+                        <span>Reserve</span>
+                        <strong><%= formatCurrency(retailerPayouts.reserves, currencyCode) %></strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="retailer-panel">
+            <div class="retailer-section-head">
+                <h2>Recent Orders</h2>
+                <a href="/retailer/orders">See all orders</a>
+            </div>
+
+            <div class="retailer-order-list">
+                <% if (!retailerOrders.length) { %>
+                    <p class="retailer-empty">No retailer orders yet.</p>
+                <% } %>
+                <% retailerOrders.slice(0, 5).forEach(order => { %>
+                    <article class="retailer-order-row">
+                        <div>
+                            <strong>#<%= order.merchantOrderId %></strong>
+                            <span><%= order.customerName %></span>
+                        </div>
+                        <div>
+                            <span>Status</span>
+                            <strong class="retailer-status"><%= order.status.replace(/_/g, ' ') %></strong>
+                        </div>
+                        <div>
+                            <span>Date</span>
+                            <strong><%= new Date(order.createdAt).toLocaleDateString('en-UG') %></strong>
+                        </div>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+
+    <%- include('../partials/retailer-bottom-nav.ejs') %>
+</body>
+</html>

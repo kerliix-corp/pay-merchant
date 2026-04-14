@@ -1,0 +1,20 @@
+<nav class="retailer-topbar">
+    <div class="retailer-topbar-inner">
+        <a href="/retailer/dashboard" class="retailer-brand">
+            <i class="fas fa-store"></i>
+            <div>
+                <strong><%= retailerName || (user && user.retailerName) || merchantName %></strong>
+                <span>Retailer Console</span>
+            </div>
+        </a>
+
+        <div class="retailer-topbar-actions">
+            <a href="/retailer/products" class="retailer-top-link <%= activeRetailerTab === 'products' ? 'active' : '' %>">Products</a>
+            <a href="/retailer/orders" class="retailer-top-link <%= activeRetailerTab === 'orders' ? 'active' : '' %>">Orders</a>
+            <a href="/retailer/payouts" class="retailer-top-link <%= activeRetailerTab === 'payouts' ? 'active' : '' %>">Payouts</a>
+            <a href="/user/account" class="retailer-user-chip">
+                <span><%= user?.initials || 'R' %></span>
+            </a>
+        </div>
+    </div>
+</nav>

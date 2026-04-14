@@ -16,7 +16,11 @@ import {
   renderCategory,
   renderWishlist,
   renderCheckoutSuccess,
-  renderCheckoutCancel
+  renderCheckoutCancel,
+  renderRetailerDashboard,
+  renderRetailerProducts,
+  renderRetailerOrders,
+  renderRetailerPayouts
 } from "../controllers/pages.js";
 
 import { requireSSO, optionalSSO } from "../middleware/ssoAuth.js";
@@ -37,6 +41,10 @@ router.get("/user/payment", requireSSO, renderPayment);
 router.get("/user/security", requireSSO, renderSecurity);
 router.get("/user/preferences", requireSSO, renderPreferences);
 router.get("/user/account", requireSSO, renderAccount);
+router.get("/retailer/dashboard", requireSSO, renderRetailerDashboard);
+router.get("/retailer/products", requireSSO, renderRetailerProducts);
+router.get("/retailer/orders", requireSSO, renderRetailerOrders);
+router.get("/retailer/payouts", requireSSO, renderRetailerPayouts);
 router.get("/user/notifications", requireSSO, renderNotifications);
 router.get("/checkout/success", requireSSO, renderCheckoutSuccess);
 router.get("/checkout/cancel", requireSSO, renderCheckoutCancel);

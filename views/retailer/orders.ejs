@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <link rel="stylesheet" href="/css/retailer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <%- include('../partials/retailer-navbar.ejs') %>
+
+    <main class="retailer-shell">
+        <section class="retailer-page-header">
+            <div>
+                <p class="retailer-eyebrow">Orders</p>
+                <h1>Retailer order flow</h1>
+                <p class="retailer-subtitle">A simple operations view for current order volume and status tracking.</p>
+            </div>
+            <div class="retailer-hero-card compact">
+                <span>Total retailer orders</span>
+                <strong><%= retailerMetrics.orderCount %></strong>
+            </div>
+        </section>
+
+        <section class="retailer-order-list detailed">
+            <% if (!retailerOrders.length) { %>
+                <article class="retailer-panel">
+                    <p class="retailer-empty">No orders have been assigned to this retailer yet.</p>
+                </article>
+            <% } %>
+
+            <% retailerOrders.forEach(order => { %>
+                <article class="retailer-panel retailer-order-card">
+                    <div class="retailer-order-topline">
+                        <div>
+                            <h2>#<%= order.merchantOrderId %></h2>
+                            <p><%= order.customerName %> • <%= order.customerEmail %></p>
+                        </div>
+                        <span class="retailer-status-pill"><%= order.status.replace(/_/g, ' ') %></span>
+                    </div>
+                    <div class="retailer-order-columns">
+                        <div>
+                            <span>Placed</span>
+                            <strong><%= new Date(order.createdAt).toLocaleDateString('en-UG') %></strong>
+                        </div>
+                        <div>
+                            <span>Payment</span>
+                            <strong><%= order.paymentMethod || 'Card' %></strong>
+                        </div>
+                        <div>
+                            <span>Items</span>
+                            <strong><%= (order.items || []).filter(item => item.retailer === retailerName).length %></strong>
+                        </div>
+                    </div>
+                </article>
+            <% }) %>
+        </section>
+    </main>
+
+    <%- include('../partials/retailer-bottom-nav.ejs') %>
+</body>
+</html>
