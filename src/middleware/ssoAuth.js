@@ -3,9 +3,23 @@ import { getUserView } from "../utils/viewHelpers.js";
 
 const APP_SOURCE = 'Kerliix shop';
 
+function normalizeBaseUrl(value) {
+  const normalized = String(value || '').trim();
+  if (!normalized) {
+    return '';
+  }
+
+  if (/^https?:\/\//i.test(normalized)) {
+    return normalized.replace(/\/+$/, '');
+  }
+
+  const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+  return `${protocol}://${normalized}`.replace(/\/+$/, '');
+}
+
 function getAccountsBaseUrl() {
   if (process.env.AUTH_BASE_URL) {
-    return process.env.AUTH_BASE_URL;
+    return normalizeBaseUrl(process.env.AUTH_BASE_URL);
   }
 
   return process.env.NODE_ENV === 'production'
@@ -13,8 +27,24 @@ function getAccountsBaseUrl() {
     : 'http://localhost:3000';
 }
 
+function getRequestBaseUrl(req) {
+  const configuredBaseUrl = normalizeBaseUrl(process.env.APP_BASE_URL);
+  if (configuredBaseUrl) {
+    return configuredBaseUrl;
+  }
+
+  const forwardedProtoHeader = req.get('x-forwarded-proto');
+  const forwardedHostHeader = req.get('x-forwarded-host');
+  const forwardedProto = forwardedProtoHeader?.split(',')[0]?.trim();
+  const forwardedHost = forwardedHostHeader?.split(',')[0]?.trim();
+  const protocol = forwardedProto || req.protocol;
+  const host = forwardedHost || req.get('host');
+
+  return normalizeBaseUrl(`${protocol}://${host}`);
+}
+
 function buildReturnUrl(req) {
-  return `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+  return new URL(req.originalUrl, `${getRequestBaseUrl(req)}/`).toString();
 }
 
 function buildLoginUrl(req) {
@@ -87,6 +117,6 @@ export async function optionalSSO(req, res, next) {
 }
 
 export function redirectToCentralLogout(req, res) {
-  const returnTo = encodeURIComponent(`${req.protocol}://${req.get('host')}/`);
+  const returnTo = encodeURIComponent(new URL('/', `${getRequestBaseUrl(req)}/`).toString());
   return res.redirect(`${getAccountsBaseUrl()}/auth/logout?returnTo=${returnTo}`);
 }
