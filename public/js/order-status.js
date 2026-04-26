@@ -1,9 +1,10 @@
 const order = window.__MERCHANT_ORDER__;
 
 function formatCurrency(amount) {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-UG", {
     style: "currency",
-    currency: "USD"
+    currency: "UGX",
+    maximumFractionDigits: 0
   }).format(Number(amount) || 0);
 }
 
@@ -29,17 +30,19 @@ function renderItems(items = []) {
 function getStatusMessage(status) {
   const messages = {
     pending_checkout: "We have created the merchant order and are waiting to start payment.",
-    payment_session_created: "Your payment session is ready on Kerliix Pay.",
+    payment_session_created: "Your SeerBit payment is in progress or waiting for confirmation.",
     confirmed: "The order was confirmed and is now in checkout.",
     pending_auth: "Authentication is in progress.",
     pending_otp: "OTP verification is required.",
     pending_momo: "Mobile money approval is still pending.",
     paid: "Payment completed successfully.",
+    payment_failed: "Payment failed. You can reopen checkout and try again.",
+    payment_cancelled: "Payment was cancelled before completion.",
     failed: "Payment failed. You can try again from the merchant app.",
     checkout_creation_failed: "We could not create a payment session."
   };
 
-  return messages[status] || "Waiting for updates from Kerliix Pay.";
+  return messages[status] || "Waiting for updates from SeerBit.";
 }
 
 function applyOrder(nextOrder) {

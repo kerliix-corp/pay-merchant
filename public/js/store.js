@@ -13,6 +13,14 @@ function formatCurrency(amount) {
   }).format(Number(amount) || 0);
 }
 
+function formatUgx(amount) {
+  return new Intl.NumberFormat("en-UG", {
+    style: "currency",
+    currency: "UGX",
+    maximumFractionDigits: 0
+  }).format(Number(amount) || 0);
+}
+
 function getCart() {
   try {
     const parsed = JSON.parse(window.localStorage.getItem(CART_KEY) || "[]");
@@ -395,74 +403,309 @@ function renderCartPage() {
 
 async function createPaymentSession() {
   const cart = getCart();
-  const checkoutBtn = document.getElementById("checkoutBtn");
   const checkoutMessage = document.getElementById("checkoutMessage");
 
   if (!cart.length) {
-    logTrace("create_payment_session_blocked_empty_cart");
     if (checkoutMessage) checkoutMessage.textContent = "Your cart is empty.";
     return;
   }
 
-  if (checkoutBtn) {
-    checkoutBtn.disabled = true;
-    checkoutBtn.textContent = "Creating payment session...";
-  }
-  if (checkoutMessage) checkoutMessage.textContent = "";
+  window.location.href = "/order-details";
+}
 
-  logTrace("create_payment_session_started", {
-    endpoint: "/api/checkout-sessions",
-    itemCount: cart.reduce((sum, item) => sum + item.quantity, 0),
-    total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    payload: { items: cart }
-  });
+function getDeliveryFee(area, option) {
+  const matrix = {
+    kampala: { standard: 5000, express: 10000 },
+    "greater-kampala": { standard: 9000, express: 15000 },
+    upcountry: { standard: 15000, express: 25000 }
+  };
+
+  return matrix[area]?.[option] || 5000;
+}
+
+function getSelectedPaymentMethod() {
+  const active = document.querySelector(".payment-choice.active");
+  return active?.dataset.method || "card";
+}
+
+function renderOrderDetailsPage() {
+  const cartItemsEl = document.getElementById("orderCartItems");
+  if (!cartItemsEl) return;
+
+  const cart = getCart();
+  const emptyState = document.getElementById("orderEmptyState");
+  const itemCount = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const subtotalUsd = cart.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
+  const subtotal = Math.round(subtotalUsd * 3700);
+  const deliveryArea = document.getElementById("deliveryArea")?.value || "kampala";
+  const deliveryOption = document.getElementById("deliveryOption")?.value || "standard";
+  const deliveryFee = getDeliveryFee(deliveryArea, deliveryOption);
+  const total = subtotal + deliveryFee;
+  const hint = document.getElementById("checkoutMethodHint");
+
+  document.getElementById("orderSummaryItems").textContent = String(itemCount);
+  document.getElementById("orderSummarySubtotal").textContent = formatUgx(subtotal);
+  document.getElementById("orderSummaryDelivery").textContent = formatUgx(deliveryFee);
+  document.getElementById("orderSummaryTotal").textContent = formatUgx(total);
+
+  const method = getSelectedPaymentMethod();
+  if (hint) {
+    hint.textContent = method === "card"
+      ? "The next page will open a card-specific checkout."
+      : `The next page will prepare a ${method === "mtn" ? "MTN" : "Airtel"} mobile money checkout.`;
+  }
+
+  if (!cart.length) {
+    cartItemsEl.innerHTML = "";
+    if (emptyState) emptyState.hidden = false;
+    const proceedBtn = document.getElementById("proceedToCheckoutBtn");
+    if (proceedBtn) proceedBtn.disabled = true;
+    return;
+  }
+
+  if (emptyState) emptyState.hidden = true;
+  cartItemsEl.innerHTML = cart.map((item) => `
+    <article class="cart-item">
+      <img src="${item.imageUrl}" alt="${item.name}" class="cart-item-image">
+      <div class="cart-item-copy">
+        <p class="product-sku">${item.sku}</p>
+        <h3>${item.name}</h3>
+        <p>${item.quantity} x ${formatCurrency(item.price)}</p>
+        <div class="product-retailer">
+          <span>${item.retailer || "Direct"}</span>
+        </div>
+      </div>
+      <strong>${formatUgx(Math.round(item.price * item.quantity * 3700))}</strong>
+    </article>
+  `).join("");
+}
+
+async function submitOrderDetails() {
+  const cart = getCart();
+  const button = document.getElementById("proceedToCheckoutBtn");
+  const message = document.getElementById("orderDetailsMessage");
+  const form = document.getElementById("orderDetailsForm");
+
+  if (!cart.length) {
+    if (message) message.textContent = "Your cart is empty.";
+    return;
+  }
+
+  const formData = new FormData(form);
+  const paymentMethod = getSelectedPaymentMethod();
+  const shippingCost = getDeliveryFee(formData.get("deliveryArea"), formData.get("deliveryOption"));
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Preparing checkout...";
+  }
+  if (message) message.textContent = "";
 
   try {
     const response = await fetch("/api/checkout-sessions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        items: cart.map(item => ({
+        items: cart.map((item) => ({
           id: item.id,
+          sku: item.sku,
           name: item.name,
+          description: item.description,
+          imageUrl: item.imageUrl,
           price: item.price,
           quantity: item.quantity,
-          sku: item.sku,
           retailer: item.retailer
-        }))
+        })),
+        customerName: formData.get("customerName"),
+        customerEmail: formData.get("customerEmail"),
+        shippingAddress: {
+          street: formData.get("street"),
+          city: formData.get("city"),
+          country: formData.get("country"),
+          state: formData.get("deliveryArea"),
+          phone: formData.get("customerPhone")
+        },
+        deliveryOption: formData.get("deliveryOption"),
+        deliveryNotes: formData.get("deliveryNotes"),
+        shippingCost,
+        paymentMethod
       })
     });
 
     const data = await response.json().catch(() => ({}));
-
-    logTrace("create_payment_session_response", {
-      ok: response.ok,
-      status: response.status,
-      data
-    });
-
     if (!response.ok) {
-      throw new Error(data.error || "Payment session could not be created.");
+      throw new Error(data.error || "We couldn't prepare the checkout.");
     }
 
-    logTrace("redirecting_to_payment_confirm", {
-      paymentUrl: data.paymentUrl,
-      merchantOrderId: data.merchantOrderId
-    });
-    window.location.href = data.paymentUrl;
+    window.location.href = data.checkoutUrl || `/checkout/${data.merchantOrderId}`;
   } catch (error) {
-    logTrace("create_payment_session_failed", {
-      message: error.message,
-      stack: error.stack
-    });
-    if (checkoutMessage) checkoutMessage.textContent = error.message;
-    if (checkoutBtn) {
-      checkoutBtn.disabled = false;
-      checkoutBtn.textContent = "Proceed to payment";
+    if (message) message.textContent = error.message;
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Continue to checkout";
     }
   }
+}
+
+function initOrderDetailsPage() {
+  renderOrderDetailsPage();
+
+  document.querySelectorAll(".payment-choice").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".payment-choice").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      renderOrderDetailsPage();
+    });
+  });
+
+  ["deliveryArea", "deliveryOption"].forEach((id) => {
+    const field = document.getElementById(id);
+    if (field) {
+      field.addEventListener("change", renderOrderDetailsPage);
+    }
+  });
+
+  const submitButton = document.getElementById("proceedToCheckoutBtn");
+  if (submitButton) {
+    submitButton.addEventListener("click", submitOrderDetails);
+  }
+}
+
+async function verifyCheckoutPayment(merchantOrderId, paymentReference, statusMessage, shouldClearCart = true) {
+  const response = await fetch(`/api/orders/${merchantOrderId}/verify-payment`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ paymentReference })
+  });
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || "Payment verification failed.");
+  }
+
+  if (data.paid) {
+    if (shouldClearCart) {
+      saveCart([]);
+      syncCartBadge();
+    }
+    window.location.href = `/orders/${merchantOrderId}`;
+    return;
+  }
+
+  if (statusMessage) {
+    statusMessage.textContent = data.status === "payment_session_created"
+      ? "Payment is still pending. We’ll keep checking."
+      : "Payment has not completed yet.";
+  }
+}
+
+function initCheckoutPage() {
+  const order = window.__CHECKOUT_ORDER__;
+  if (!order) return;
+
+  const statusMessage = document.getElementById("checkoutStatusMessage");
+
+  if (order.paymentMethod === "card") {
+    const cardButton = document.getElementById("cardCheckoutBtn");
+    if (!cardButton) return;
+
+    cardButton.addEventListener("click", () => {
+      const seerbit = window.__SEERBIT__ || {};
+      if (!seerbit.publicKey || typeof window.SeerbitPay !== "function") {
+        statusMessage.textContent = "SeerBit card checkout is not configured yet.";
+        return;
+      }
+
+      statusMessage.textContent = "Opening secure card checkout...";
+
+      window.SeerbitPay(
+        {
+          public_key: seerbit.publicKey,
+          tranref: order.paymentReference || order.merchantOrderId,
+          currency: order.currency || "UGX",
+          country: seerbit.country || "UG",
+          amount: String(order.total),
+          email: order.customerEmail,
+          full_name: order.customerName,
+          mobile_no: order.shippingAddress?.phone || "",
+          description: `Order ${order.merchantOrderId}`,
+          callbackurl: seerbit.redirectUrl || `${window.location.origin}/orders/${order.merchantOrderId}`,
+          setAmountByCustomer: false,
+          tokenize: false,
+          split: order.metadata?.split?.seerbit || undefined,
+          customization: {
+            payment_method: ["card"],
+            theme: {
+              background_color: "F9F5EE",
+              button_color: "17203A"
+            }
+          }
+        },
+        async function callback(response) {
+          try {
+            const paymentReference = response?.paymentReference || response?.reference || response?.tranref || order.paymentReference;
+            statusMessage.textContent = "Verifying payment...";
+            await verifyCheckoutPayment(order.merchantOrderId, paymentReference, statusMessage, true);
+          } catch (error) {
+            statusMessage.textContent = error.message;
+          }
+        },
+        function close() {
+          if (!statusMessage.textContent) {
+            statusMessage.textContent = "Checkout window closed before payment confirmation.";
+          }
+        }
+      );
+    });
+
+    return;
+  }
+
+  const mobileButton = document.getElementById("mobileMoneyBtn");
+  const mobileInput = document.getElementById("mobileMoneyNumber");
+  if (!mobileButton || !mobileInput) return;
+
+  let pollHandle = null;
+
+  mobileButton.addEventListener("click", async () => {
+    statusMessage.textContent = "";
+    mobileButton.disabled = true;
+    mobileButton.textContent = "Sending prompt...";
+
+    try {
+      const response = await fetch(`/api/orders/${order.merchantOrderId}/mobile-money`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          network: order.paymentMethod === "mtn" ? "MTN" : "AIRTEL",
+          mobileNumber: mobileInput.value.trim()
+        })
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to send mobile money prompt.");
+      }
+
+      statusMessage.textContent = data.message || "Payment prompt sent. Waiting for approval...";
+
+      if (pollHandle) {
+        window.clearInterval(pollHandle);
+      }
+
+      pollHandle = window.setInterval(async () => {
+        try {
+          await verifyCheckoutPayment(order.merchantOrderId, order.paymentReference, statusMessage, true);
+        } catch (error) {
+          statusMessage.textContent = error.message;
+        }
+      }, 8000);
+    } catch (error) {
+      statusMessage.textContent = error.message;
+      mobileButton.disabled = false;
+      mobileButton.textContent = "Send payment prompt";
+    }
+  });
 }
 
 function initMobileMenu() {
@@ -608,5 +851,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (checkoutBtn) {
       checkoutBtn.addEventListener("click", createPaymentSession);
     }
+  }
+
+  if (document.getElementById("orderDetailsForm")) {
+    initOrderDetailsPage();
+  }
+
+  if (window.__CHECKOUT_ORDER__) {
+    initCheckoutPage();
   }
 });

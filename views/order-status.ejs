@@ -54,7 +54,7 @@
                     </div>
                     <div class="summary-row total">
                         <span>Total</span>
-                        <strong id="orderTotal">$<%= Number(order.total || 0).toFixed(2) %></strong>
+                        <strong id="orderTotal"><%= formatCurrency(Number(order.total || 0), currencyCode) %></strong>
                     </div>
                 </div>
 
@@ -69,8 +69,8 @@
                 <p class="checkout-note">No webhook updates are available for this order.</p>
             <% } else { %>
                 <h2 id="orderStateLabel"><%= order.status %></h2>
-                <p class="checkout-note" id="orderStateMessage">Waiting for payment updates from Kerliix Pay.</p>
-                <p class="checkout-note">This page updates by polling the merchant backend, which is updated by Kerliix Pay webhooks.</p>
+                <p class="checkout-note" id="orderStateMessage">Waiting for payment updates from SeerBit.</p>
+                <p class="checkout-note">This page updates by polling the merchant backend while SeerBit payments and webhook updates settle.</p>
                 <p class="checkout-note">Last event: <span id="lastEventId"><%= order.lastEventId || "-" %></span></p>
             <% } %>
             <a href="/" class="primary-button inline-button">Back to store</a>

@@ -3,6 +3,7 @@ import {
   renderHome,
   renderRetailers,
   renderOrders,
+  renderOrderStatus,
   renderAccount,
   renderAddresses,
   renderPayment,
@@ -11,6 +12,8 @@ import {
   renderSearch,
   renderSecurity,
   renderCart,
+  renderOrderDetails,
+  renderCheckout,
   renderNotifications,
   renderProductDetails,
   renderCategory,
@@ -33,8 +36,11 @@ router.get("/product/:productId", optionalSSO, renderProductDetails);
 router.get("/category/:categoryName", optionalSSO, renderCategory);
 router.get("/retailers", optionalSSO, renderRetailers);
 router.get("/cart", optionalSSO, renderCart);
+router.get("/order-details", optionalSSO, renderOrderDetails);
+router.get("/checkout/:merchantOrderId", optionalSSO, renderCheckout);
 router.get("/wishlist", requireSSO, renderWishlist);
 router.get("/user/orders", requireSSO, renderOrders);
+router.get("/orders/:merchantOrderId", optionalSSO, renderOrderStatus);
 router.get("/user/profile", requireSSO, renderProfile);
 router.get("/user/addresses", requireSSO, renderAddresses);
 router.get("/user/payment", requireSSO, renderPayment);

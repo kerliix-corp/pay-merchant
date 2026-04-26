@@ -56,6 +56,10 @@
                     <span>Latest processing batch</span>
                     <strong><%= retailerOrders[0]?.merchantOrderId ? '#' + retailerOrders[0].merchantOrderId : 'No batch yet' %></strong>
                 </div>
+                <div class="retailer-highlight-row">
+                    <span>Settlement preference</span>
+                    <strong><%= retailerHighlights?.primarySettlementMethod ? retailerHighlights.primarySettlementMethod.replace(/_/g, ' ') : 'manual review' %></strong>
+                </div>
             </div>
         </section>
     </main>

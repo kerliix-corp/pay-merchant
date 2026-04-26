@@ -16,7 +16,7 @@
             <div>
                 <p class="retailer-eyebrow">Orders</p>
                 <h1>Retailer order flow</h1>
-                <p class="retailer-subtitle">A simple operations view for current order volume and status tracking.</p>
+                <p class="retailer-subtitle">Track customer demand, settlement method, and the net amount heading to your store.</p>
             </div>
             <div class="retailer-hero-card compact">
                 <span>Total retailer orders</span>
@@ -32,6 +32,7 @@
             <% } %>
 
             <% retailerOrders.forEach(order => { %>
+                <% const retailerAllocation = (order.metadata?.split?.allocations || []).find(item => item.retailerName === retailerName) || null; %>
                 <article class="retailer-panel retailer-order-card">
                     <div class="retailer-order-topline">
                         <div>
@@ -52,6 +53,14 @@
                         <div>
                             <span>Items</span>
                             <strong><%= (order.items || []).filter(item => item.retailer === retailerName).length %></strong>
+                        </div>
+                        <div>
+                            <span>Settlement</span>
+                            <strong><%= (retailerAllocation?.settlementMethod || 'manual_review').replace(/_/g, ' ') %></strong>
+                        </div>
+                        <div>
+                            <span>Net payout</span>
+                            <strong><%= formatCurrency(retailerAllocation?.retailerAmount || 0, currencyCode) %></strong>
                         </div>
                     </div>
                 </article>

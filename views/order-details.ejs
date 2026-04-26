@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    <header class="cart-hero">
+        <nav class="topbar">
+            <a href="/" class="brand"><%= merchantName %></a>
+            <a href="/cart" class="secondary-link">Back to cart</a>
+        </nav>
+
+        <div class="hero-copy compact">
+            <p class="eyebrow">Order Details</p>
+            <h1>Confirm the cart, add delivery details, then choose how the customer will pay.</h1>
+        </div>
+    </header>
+
+    <main class="checkout-flow-shell">
+        <section class="checkout-stage">
+            <article class="checkout-panel">
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Section 1</p>
+                        <h2>Cart and total</h2>
+                    </div>
+                </div>
+                <div id="orderCartItems" class="cart-items"></div>
+                <div id="orderEmptyState" class="empty-state" hidden>
+                    <h3>Your cart is empty</h3>
+                    <p>Add products before continuing to order details.</p>
+                    <a href="/" class="primary-button inline-button">Browse items</a>
+                </div>
+            </article>
+
+            <article class="checkout-panel">
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Section 2</p>
+                        <h2>Delivery details</h2>
+                    </div>
+                </div>
+
+                <form id="orderDetailsForm" class="customer-fields stacked-fields">
+                    <label for="customerName">Customer name</label>
+                    <input id="customerName" name="customerName" type="text" value="<%= user?.fullName || '' %>" required>
+
+                    <label for="customerEmail">Customer email</label>
+                    <input id="customerEmail" name="customerEmail" type="email" value="<%= user?.email || '' %>" required>
+
+                    <label for="customerPhone">Phone number</label>
+                    <input id="customerPhone" name="customerPhone" type="tel" value="<%= user?.phone || '' %>" required>
+
+                    <label for="deliveryStreet">Street / pickup point</label>
+                    <input id="deliveryStreet" name="street" type="text" placeholder="Plot, street, or landmark" required>
+
+                    <div class="checkout-two-col">
+                        <div>
+                            <label for="deliveryCity">City</label>
+                            <input id="deliveryCity" name="city" type="text" placeholder="Kampala" required>
+                        </div>
+                        <div>
+                            <label for="deliveryArea">Delivery area</label>
+                            <select id="deliveryArea" name="deliveryArea" required>
+                                <option value="kampala">Kampala central</option>
+                                <option value="greater-kampala">Greater Kampala</option>
+                                <option value="upcountry">Upcountry</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="checkout-two-col">
+                        <div>
+                            <label for="deliveryOption">Delivery option</label>
+                            <select id="deliveryOption" name="deliveryOption" required>
+                                <option value="standard">Standard delivery</option>
+                                <option value="express">Express delivery</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="deliveryCountry">Country</label>
+                            <input id="deliveryCountry" name="country" type="text" value="Uganda" required>
+                        </div>
+                    </div>
+
+                    <label for="deliveryNotes">Delivery notes</label>
+                    <textarea id="deliveryNotes" name="deliveryNotes" rows="4" placeholder="Gate number, landmark, preferred call instructions"></textarea>
+                </form>
+            </article>
+
+            <article class="checkout-panel">
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Section 3</p>
+                        <h2>Payment method</h2>
+                    </div>
+                </div>
+
+                <div class="payment-choice-grid" id="paymentMethodChoices">
+                    <button class="payment-choice active" type="button" data-method="card">
+                        <span class="payment-choice-title">Card</span>
+                        <span class="payment-choice-copy">Use SeerBit secure card checkout.</span>
+                    </button>
+                    <button class="payment-choice" type="button" data-method="mtn">
+                        <span class="payment-choice-title">MTN MoMo</span>
+                        <span class="payment-choice-copy">Send a mobile money prompt to the shopper.</span>
+                    </button>
+                    <button class="payment-choice" type="button" data-method="airtel">
+                        <span class="payment-choice-title">Airtel Money</span>
+                        <span class="payment-choice-copy">Use Airtel wallet authorization at checkout.</span>
+                    </button>
+                </div>
+            </article>
+        </section>
+
+        <aside class="summary-panel sticky-summary">
+            <p class="section-label">Ready to continue</p>
+            <h2>Order summary</h2>
+
+            <div class="summary-list">
+                <div class="summary-row">
+                    <span>Items</span>
+                    <strong id="orderSummaryItems">0</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <strong id="orderSummarySubtotal">UGX 0</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <strong id="orderSummaryDelivery">UGX 0</strong>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <strong id="orderSummaryTotal">UGX 0</strong>
+                </div>
+            </div>
+
+            <div class="checkout-next-card">
+                <p id="checkoutMethodHint">The next page will open a card-specific checkout.</p>
+            </div>
+
+            <button id="proceedToCheckoutBtn" class="primary-button checkout-button">Continue to checkout</button>
+            <p id="orderDetailsMessage" class="checkout-message"></p>
+        </aside>
+    </main>
+
+    <script>
+        window.__STORE_PRODUCTS__ = <%- JSON.stringify(products) %>;
+        window.__USER__ = <%- JSON.stringify(user || null) %>;
+    </script>
+    <script src="/js/store.js"></script>
+</body>
+</html>

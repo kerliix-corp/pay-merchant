@@ -64,6 +64,10 @@
                         <span>Latest order</span>
                         <strong><%= retailerHighlights.latestOrder?.merchantOrderId ? '#' + retailerHighlights.latestOrder.merchantOrderId : 'No recent orders' %></strong>
                     </div>
+                    <div class="retailer-highlight-row">
+                        <span>Primary settlement method</span>
+                        <strong><%= retailerHighlights.primarySettlementMethod.replace(/_/g, ' ') %></strong>
+                    </div>
                 </div>
             </article>
 
@@ -109,6 +113,10 @@
                         <div>
                             <span>Status</span>
                             <strong class="retailer-status"><%= order.status.replace(/_/g, ' ') %></strong>
+                        </div>
+                        <div>
+                            <span>Retailer value</span>
+                            <strong><%= formatCurrency(((order.metadata?.split?.allocations || []).find(item => item.retailerName === retailerName)?.retailerAmount) || 0, currencyCode) %></strong>
                         </div>
                         <div>
                             <span>Date</span>

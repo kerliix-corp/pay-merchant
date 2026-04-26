@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/store.css">
+    <script src="https://checkout.seerbitapi.com/api/v2/seerbit.js"></script>
+</head>
+<body data-payment-app-url="<%= paymentAppUrl %>" data-merchant-name="<%= merchantName %>" data-app-base-url="<%= appBaseUrl %>">
+    <header class="cart-hero">
+        <nav class="topbar">
+            <a href="/" class="brand"><%= merchantName %></a>
+            <a href="/order-details" class="secondary-link">Edit order details</a>
+        </nav>
+
+        <div class="hero-copy compact">
+            <p class="eyebrow">Checkout</p>
+            <h1><%= order.paymentMethod === 'card' ? 'Complete the secure card payment.' : `Complete the ${order.paymentMethod === 'mtn' ? 'MTN' : 'Airtel'} mobile money payment.` %></h1>
+        </div>
+    </header>
+
+    <main class="checkout-flow-shell">
+        <section class="checkout-stage">
+            <article class="checkout-panel">
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Order</p>
+                        <h2>#<%= order.merchantOrderId %></h2>
+                    </div>
+                    <span class="status-pill"><%= order.paymentMethod %></span>
+                </div>
+
+                <div class="cart-items compact-list">
+                    <% order.items.forEach(item => { %>
+                        <article class="cart-item">
+                            <img src="<%= item.imageUrl %>" alt="<%= item.name %>" class="cart-item-image">
+                            <div class="cart-item-copy">
+                                <p class="product-sku"><%= item.sku %></p>
+                                <h3><%= item.name %></h3>
+                                <p><%= item.quantity %> x <%= formatCurrency(item.price, currencyCode) %></p>
+                                <div class="product-retailer">
+                                    <span><%= item.retailer || 'Direct' %></span>
+                                </div>
+                            </div>
+                            <strong><%= formatCurrency(item.price * item.quantity, currencyCode) %></strong>
+                        </article>
+                    <% }) %>
+                </div>
+            </article>
+
+            <article class="checkout-panel">
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Delivery</p>
+                        <h2><%= order.customerName %></h2>
+                    </div>
+                </div>
+
+                <div class="checkout-info-grid">
+                    <div class="checkout-info-card">
+                        <span>Email</span>
+                        <strong><%= order.customerEmail %></strong>
+                    </div>
+                    <div class="checkout-info-card">
+                        <span>Phone</span>
+                        <strong><%= order.shippingAddress?.phone || '-' %></strong>
+                    </div>
+                    <div class="checkout-info-card">
+                        <span>Address</span>
+                        <strong><%= [order.shippingAddress?.street, order.shippingAddress?.city, order.shippingAddress?.country].filter(Boolean).join(', ') || '-' %></strong>
+                    </div>
+                    <div class="checkout-info-card">
+                        <span>Delivery mode</span>
+                        <strong><%= order.metadata?.deliveryOption || 'standard' %></strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="checkout-panel method-panel">
+                <div class="catalog-header">
+                    <div>
+                        <p class="section-label">Payment</p>
+                        <h2><%= order.paymentMethod === 'card' ? 'Card checkout' : 'Mobile money checkout' %></h2>
+                    </div>
+                </div>
+
+                <% if (order.paymentMethod === 'card') { %>
+                    <div class="method-card">
+                        <p>We’ll open SeerBit’s secure card widget with your order amount and split settlement configuration already attached.</p>
+                        <button id="cardCheckoutBtn" class="primary-button inline-button">Pay with card</button>
+                    </div>
+                <% } else { %>
+                    <div class="method-card">
+                        <p>Send a payment prompt through SeerBit to the customer’s <%= order.paymentMethod === 'mtn' ? 'MTN MoMo' : 'Airtel Money' %> line.</p>
+                        <div class="customer-fields stacked-fields">
+                            <label for="mobileMoneyNumber">Mobile money number</label>
+                            <input id="mobileMoneyNumber" type="tel" value="<%= order.shippingAddress?.phone || '' %>" placeholder="2567XXXXXXXX" />
+                        </div>
+                        <button id="mobileMoneyBtn" class="primary-button inline-button">Send payment prompt</button>
+                    </div>
+                <% } %>
+
+                <p id="checkoutStatusMessage" class="checkout-message"></p>
+            </article>
+        </section>
+
+        <aside class="summary-panel sticky-summary">
+            <p class="section-label">Totals</p>
+            <h2>Settlement-ready order</h2>
+
+            <div class="summary-list">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <strong><%= formatCurrency(order.subtotal, currencyCode) %></strong>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery</span>
+                    <strong><%= formatCurrency(order.shipping, currencyCode) %></strong>
+                </div>
+                <div class="summary-row">
+                    <span>Kerliix commission</span>
+                    <strong><%= formatCurrency(order.metadata?.split?.commissionAmount || 0, currencyCode) %></strong>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <strong><%= formatCurrency(order.total, currencyCode) %></strong>
+                </div>
+            </div>
+
+            <div class="split-breakdown">
+                <h3>Retailer settlements</h3>
+                <% (order.metadata?.split?.allocations || []).forEach(allocation => { %>
+                    <div class="summary-row">
+                        <span><%= allocation.retailerName %></span>
+                        <strong><%= formatCurrency(allocation.retailerAmount, currencyCode) %></strong>
+                    </div>
+                <% }) %>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        window.__CHECKOUT_ORDER__ = <%- JSON.stringify(order) %>;
+        window.__SEERBIT__ = <%- JSON.stringify({ publicKey: seerbitPublicKey, country: seerbitCountry, redirectUrl: seerbitRedirectUrl }) %>;
+    </script>
+    <script src="/js/store.js"></script>
+</body>
+</html>

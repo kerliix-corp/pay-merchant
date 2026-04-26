@@ -67,6 +67,15 @@ export const renderCart = (req, res) => {
   });
 };
 
+export const renderOrderDetails = (req, res) => {
+  const user = getUser(req);
+  res.render("order-details", {
+    ...getViewModel(),
+    title: `${merchantName} | Order Details`,
+    user: getUserView(user)
+  });
+};
+
 export const renderRetailers = (req, res) => {
   res.render("retailers", {
     ...getViewModel(),
@@ -93,6 +102,16 @@ export const renderOrders = (req, res) => {
         orders: []
       });
     });
+};
+
+export const renderOrderStatus = async (req, res) => {
+  const order = await Order.findOne({ merchantOrderId: req.params.merchantOrderId }).lean();
+
+  res.render("order-status", {
+    ...getViewModel(),
+    title: `${merchantName} | Order Status`,
+    order
+  });
 };
 
 export const renderAccount = (req, res) => {
@@ -152,6 +171,28 @@ export const renderPayment = (req, res) => {
     title: `${merchantName} | Payment Methods`,
     user: getUserView(user),
     accountData: getUserView(user)
+  });
+};
+
+export const renderCheckout = async (req, res) => {
+  const user = getUser(req);
+  const order = await Order.findOne({ merchantOrderId: req.params.merchantOrderId }).lean();
+
+  if (!order) {
+    return res.status(404).render("404", {
+      ...getViewModel(),
+      title: `${merchantName} | Order Not Found`
+    });
+  }
+
+  res.render("checkout", {
+    ...getViewModel(),
+    title: `${merchantName} | Checkout`,
+    user: getUserView(user),
+    order,
+    seerbitPublicKey: process.env.SEERBIT_PUBLIC_KEY || "",
+    seerbitCountry: process.env.SEERBIT_COUNTRY || "UG",
+    seerbitRedirectUrl: `${appBaseUrl}/orders/${encodeURIComponent(order.merchantOrderId)}`
   });
 };
 
@@ -251,6 +292,7 @@ export const renderRetailerPayouts = async (req, res) => {
     retailerOrders: orders,
     retailerMetrics: retailerSummary.metrics,
     retailerPayouts: retailerSummary.payouts,
+    retailerHighlights: retailerSummary.highlights,
     activeRetailerTab: "payouts"
   });
 };
@@ -265,14 +307,27 @@ function getRetailerOrderValue(order, retailerName) {
   }, 0);
 }
 
+function getRetailerAllocation(order, retailerName) {
+  return (order.metadata?.split?.allocations || []).find((entry) => entry.retailerName === retailerName) || null;
+}
+
 function buildRetailerSummary(retailerName, retailerProducts, orders) {
   const paidOrders = orders.filter((order) => order.status === "paid");
-  const paidRevenue = paidOrders.reduce((sum, order) => sum + getRetailerOrderValue(order, retailerName), 0);
+  const paidRevenue = paidOrders.reduce((sum, order) => {
+    const allocation = getRetailerAllocation(order, retailerName);
+    return sum + (allocation?.retailerAmount || getRetailerOrderValue(order, retailerName));
+  }, 0);
   const totalUnitsSold = orders.reduce((sum, order) => {
     return sum + getRetailerOrderItems(order, retailerName).reduce((count, item) => count + Number(item.quantity || 0), 0);
   }, 0);
   const lowStockCount = retailerProducts.filter((product) => Number(product.stockCount || 0) <= 20).length;
   const topProduct = [...retailerProducts].sort((a, b) => Number(b.stockCount || 0) - Number(a.stockCount || 0))[0] || null;
+  const settlementMethods = paidOrders.reduce((acc, order) => {
+    const method = getRetailerAllocation(order, retailerName)?.settlementMethod || "manual_review";
+    acc[method] = (acc[method] || 0) + 1;
+    return acc;
+  }, {});
+  const primarySettlementMethod = Object.entries(settlementMethods).sort((a, b) => b[1] - a[1])[0]?.[0] || "manual_review";
 
   return {
     metrics: {
@@ -284,13 +339,14 @@ function buildRetailerSummary(retailerName, retailerProducts, orders) {
       lowStockCount
     },
     payouts: {
-      available: Math.round(paidRevenue * 0.82),
-      processing: Math.round(paidRevenue * 0.12),
+      available: Math.round(paidRevenue * 0.74),
+      processing: Math.round(paidRevenue * 0.2),
       reserves: Math.round(paidRevenue * 0.06)
     },
     highlights: {
       topProduct,
-      latestOrder: orders[0] || null
+      latestOrder: orders[0] || null,
+      primarySettlementMethod
     }
   };
 }
